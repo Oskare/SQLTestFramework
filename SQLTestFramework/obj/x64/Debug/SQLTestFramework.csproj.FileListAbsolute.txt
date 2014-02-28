@@ -1,0 +1,5 @@
+C:\Users\starcounter\Documents\GitHub\SQLTestFramework\SQLTestFramework\obj\x64\Debug\SQLTestFramework.csprojResolveAssemblyReference.cache
+C:\Users\starcounter\Documents\GitHub\SQLTestFramework\SQLTestFramework\bin\Debug\SQLTestFramework.exe
+C:\Users\starcounter\Documents\GitHub\SQLTestFramework\SQLTestFramework\bin\Debug\SQLTestFramework.pdb
+C:\Users\starcounter\Documents\GitHub\SQLTestFramework\SQLTestFramework\obj\x64\Debug\SQLTestFramework.exe
+C:\Users\starcounter\Documents\GitHub\SQLTestFramework\SQLTestFramework\obj\x64\Debug\SQLTestFramework.pdb
