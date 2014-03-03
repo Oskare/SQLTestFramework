@@ -68,12 +68,14 @@
     <Compile Include="Framework\IInputHandler.cs" />
     <Compile Include="Framework\IOutputHandler.cs" />
     <Compile Include="Framework\FileWriter.cs" />
+    <Compile Include="Framework\SQLQuery.cs" />
     <Compile Include="Framework\SQLTestCase.cs" />
     <Compile Include="Framework\ITestExecutor.cs" />
     <Compile Include="Framework\TestExecutor.cs" />
+    <Compile Include="TestPopulation.cs" />
     <Compile Include="Framework\TestRunner.cs" />
-    <Compile Include="Framework\ITestValidator.cs" />
-    <Compile Include="Framework\TestValidator.cs" />
+    <Compile Include="Framework\IResultValidator.cs" />
+    <Compile Include="Framework\ResultValidator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
