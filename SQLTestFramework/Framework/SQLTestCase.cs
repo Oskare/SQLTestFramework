@@ -11,23 +11,18 @@ namespace SQLTestFramework.Framework
     /// </summary>
     public abstract class SQLTestCase
     {
-        /// <summary>
-        /// Test case statement
-        /// </summary>
-        private String statement = null;
+        public String description { get; set; }
+        public String statement { get; set; }
+        public Object[] variableValues { get; set; }
+        public Boolean dataManipulation { get; set; }
+        public String expectedResults { get; set; }
 
-        /// <summary>
-        /// Description of test case
-        /// </summary>
-        private String description = null;
-
-        /// <summary>
-        /// Expected result of statement execution
-        /// </summary>
-        private String expectedResults = null;
-
+        public String actualResults1 { get; set; }
+        public String actualResults2 { get; set; }
         // ...
 
         public abstract Boolean EvaluateResults();
+
+        public abstract void Execute(Boolean firstExecution);
     }
 }
