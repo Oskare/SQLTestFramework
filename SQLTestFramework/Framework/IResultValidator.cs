@@ -9,8 +9,8 @@ namespace SQLTestFramework.Framework
     /// <summary>
     /// Interface to be implemented by component validating test execution results
     /// </summary>
-    public interface ITestValidator
+    public interface IResultValidator
     {
-        void EvaluateTests(List<SQLTestCase> tests);
+        int EvaluateTests(List<SQLTestCase> tests);
     }
 }
