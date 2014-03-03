@@ -11,9 +11,29 @@ namespace SQLTestFramework.Framework
     /// </summary>
     class FileWriter: IOutputHandler
     {
-        public void Output(List<SQLTestCase> tests)
+        /// <summary>
+        /// STUB! (Prints all tests + summary)
+        /// Writes a test run result summary and failed tests to file.
+        /// </summary>
+        /// <param name="tests">List of all tests run</param>
+        /// <param name="failedTests">Number of failed tests</param>
+        public void Output(List<SQLTestCase> tests, int failedTests)
         {
-           throw new NotImplementedException();
+            Console.WriteLine(Environment.NewLine + "OUTPUT:");
+
+            foreach (SQLTestCase test in tests)
+            {
+                Console.WriteLine(test);
+            }
+
+            if (failedTests > 0)
+            {
+                Console.WriteLine(failedTests + " test case(s) failed");
+            }
+            else
+            {
+                Console.WriteLine("All tests passed");
+            }
         }
     }
 }
