@@ -1,5 +1,4 @@
 ﻿using System;
-using Starcounter;
 using SQLTestFramework.Framework;
 
 namespace SQLTestFramework
@@ -8,7 +7,10 @@ namespace SQLTestFramework
     {
         static void Main()
         {
-            TestRunner.Initialize(new FileReader(), new TestExecutor(), new TestValidator(), new FileWriter());
+            //TestPopulation.Clear();
+            //TestPopulation.Populate();
+
+            TestRunner.Initialize(new FileReader(), new TestExecutor(), new ResultValidator(), new FileWriter());
             TestRunner.RunTest("testfile");
         }
     }
