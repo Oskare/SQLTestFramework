@@ -8,35 +8,44 @@ namespace SQLTestFramework.Framework
 {
     public static class TestRunner
     {
-        static List<SQLTestCase> testList = null;
+        private static List<SQLTestCase> testList;
 
-        static IInputHandler inputHandler = null;
-        static ITestExecutor testExecutor = null;
-        static ITestValidator testValidator = null;
-        static IOutputHandler outputHandler = null;
+        private static IInputHandler inputHandler;
+        private static ITestExecutor testExecutor;
+        private static IResultValidator resultValidator;
+        private static IOutputHandler outputHandler;
 
+        /// <summary>
+        /// Initialize the system by storing the objects to use for different parts of the system.
+        /// </summary>
+        /// <param name="input">An object implementing the input handler system component.</param>
+        /// <param name="executor">An object implementing the test executor system component.</param>
+        /// <param name="validator">An object implementing the result validator system component.</param>
+        /// <param name="output">An object implementing the output handler system component.</param>
         public static void Initialize(IInputHandler input, ITestExecutor executor, 
-            ITestValidator validator, IOutputHandler output)
+            IResultValidator validator, IOutputHandler output)
         {
             inputHandler = input;
             testExecutor = executor;
-            testValidator = validator;
+            resultValidator = validator;
             outputHandler = output;
         }
 
         public static void RunTest(String filename)
         {
+            // TODO: Null check
+
             // Read tests from input
             testList = inputHandler.ReadTests(filename);
 
             // Run tests in parallel
-            testExecutor.ExecutePar(testList);
+            testExecutor.ExecuteSeq(testList);
 
-            // Validate results
-            testValidator.EvaluateTests(testList);
+            // Check results
+            int failedTests = resultValidator.EvaluateTests(testList);
 
             // Output
-            outputHandler.Output(testList);
+            outputHandler.Output(testList, failedTests);
         }
 
     }
