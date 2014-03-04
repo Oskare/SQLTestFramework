@@ -12,18 +12,18 @@ namespace SQLTestFramework.Framework
     class ResultValidator: IResultValidator
     {
         /// <summary>
-        /// Returns the number of failed tests
+        /// Returns all failed tests
         /// </summary>
         /// <param name="tests"></param>
-        /// <returns></returns>
-        public int EvaluateTests(List<SQLTestCase> tests)
+        /// <returns>A list of failed tests</returns>
+        public List<SQLTestCase> EvaluateTests(List<SQLTestCase> tests)
         {
-            int failedTests = 0;
+            List<SQLTestCase> failedTests = new List<SQLTestCase>();
             foreach (SQLTestCase test in tests)
             {
                 if (!test.EvaluateResults())
                 {
-                    failedTests++;
+                    failedTests.Add(test);
                 }
             }
             return failedTests;

@@ -72,6 +72,7 @@
     <Compile Include="Framework\SQLTestCase.cs" />
     <Compile Include="Framework\ITestExecutor.cs" />
     <Compile Include="Framework\TestExecutor.cs" />
+    <Compile Include="Framework\Utilities.cs" />
     <Compile Include="TestPopulation.cs" />
     <Compile Include="Framework\TestRunner.cs" />
     <Compile Include="Framework\IResultValidator.cs" />

@@ -9,6 +9,7 @@ namespace SQLTestFramework.Framework
     public static class TestRunner
     {
         private static List<SQLTestCase> testList;
+        private static List<SQLTestCase> failedTests;
 
         private static IInputHandler inputHandler;
         private static ITestExecutor testExecutor;
@@ -41,8 +42,8 @@ namespace SQLTestFramework.Framework
             // Run tests in parallel
             testExecutor.ExecuteSeq(testList);
 
-            // Check results
-            int failedTests = resultValidator.EvaluateTests(testList);
+            // Get failed tests
+            failedTests = resultValidator.EvaluateTests(testList);
 
             // Output
             outputHandler.Output(testList, failedTests);

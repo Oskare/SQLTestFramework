@@ -40,7 +40,7 @@ namespace SQLTestFramework.Framework
             return Passed;
         }
 
-        public override void Execute(int iteration)
+        public override void Execute()
         {
             try
             {
