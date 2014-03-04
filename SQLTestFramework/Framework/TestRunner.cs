@@ -23,8 +23,8 @@ namespace SQLTestFramework.Framework
         /// <param name="executor">An object implementing the test executor system component.</param>
         /// <param name="validator">An object implementing the result validator system component.</param>
         /// <param name="output">An object implementing the output handler system component.</param>
-        public static void Initialize(IInputHandler input, ITestExecutor executor, 
-            IResultValidator validator, IOutputHandler output)
+        public static void Initialize(IInputHandler input = null, ITestExecutor executor = null, 
+            IResultValidator validator = null, IOutputHandler output = null)
         {
             inputHandler = input;
             testExecutor = executor;
@@ -32,9 +32,13 @@ namespace SQLTestFramework.Framework
             outputHandler = output;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename"></param>
         public static void RunTest(String filename)
         {
-            // TODO: Null check
+            ComponentNullCheck();
 
             // Read tests from input
             testList = inputHandler.ReadTests(filename);
@@ -50,5 +54,30 @@ namespace SQLTestFramework.Framework
             outputHandler.Output(testList, failedTests);
         }
 
+        /// <summary>
+        /// Replace any null components with the standard components
+        /// </summary>
+        public static void ComponentNullCheck()
+        {
+            if (inputHandler == null)
+            {
+                inputHandler = new FileReader();
+            }
+
+            if (testExecutor == null)
+            {
+                testExecutor = new TestExecutor();
+            }
+
+            if (resultValidator == null)
+            {
+                resultValidator = new ResultValidator();
+            }
+
+            if (outputHandler == null)
+            {
+                outputHandler = new FileWriter();
+            }
+        }
     }
 }
