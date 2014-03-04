@@ -11,7 +11,7 @@ namespace SQLTestFramework.Framework
     /// <summary>
     /// Class representing SQL test queries
     /// </summary>
-    class SQLQuery : SQLTestCase
+    public class SQLQuery : SQLTestCase
     {
         public String ExpectedExecutionPlan { get; set; }
         public List<String> ActualExecutionPlan { get; set; }
@@ -34,12 +34,18 @@ namespace SQLTestFramework.Framework
             String expectedResultsNoWhitespace = Regex.Replace(ExpectedResults, "\\s", "");
             String expectedExecutionPlanNoWhitespace = Regex.Replace(ExpectedExecutionPlan, "\\s", "");
 
+            Passed = false;
+
+            if (ActualResults.Count == 0)
+            {
+                return Passed;
+            }
+
             for (int i = 0; i < ActualResults.Count; i++)
             {
                 if (expectedResultsNoWhitespace != Regex.Replace(ActualResults[i], "\\s", "") ||
                     expectedExecutionPlanNoWhitespace != Regex.Replace(ActualExecutionPlan[i], "\\s", "")) 
                 {
-                    Passed = false;
                     return Passed;
                 }
             }
