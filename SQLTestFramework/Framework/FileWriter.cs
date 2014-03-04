@@ -21,13 +21,15 @@ namespace SQLTestFramework.Framework
         {
             Console.WriteLine(Environment.NewLine + "OUTPUT:");
 
-            foreach (SQLTestCase test in tests)
-            {
-                Console.WriteLine(test);
-            }
-
             if (failedTests > 0)
             {
+                foreach (SQLTestCase test in tests)
+                {
+                    if (!test.Passed)
+                    {
+                        Console.WriteLine(test);
+                    }
+                }
                 Console.WriteLine(failedTests + " test case(s) failed");
             }
             else
