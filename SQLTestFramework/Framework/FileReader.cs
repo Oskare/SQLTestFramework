@@ -23,25 +23,25 @@ namespace SQLTestFramework.Framework
 
             // TODO: Factory should instantiate the correct class implementing SQLTestCase
             SQLTestCase query1 = new SQLQuery();
-            query1.description = "Test 1";
-            query1.statement = "SELECT * FROM Person p";
-            query1.expectedResults = 
+            query1.Description = "Test 1";
+            query1.Statement = "SELECT * FROM Person p";
+            query1.ExpectedResults = 
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
-                "| Albert | 987 | Pb |" + Environment.NewLine + 
+                "| Albert | 990 | Pb |" + Environment.NewLine + 
                 "| Einstein | 988 | Pc |";
 
             SQLTestCase query2 = new SQLQuery();
-            query2.description = "Test 2";
-            query2.statement = "SELECT * FROM Company c";
-            query2.expectedResults = 
+            query2.Description = "Test 2";
+            query2.Statement = "SELECT * FROM Company c";
+            query2.ExpectedResults = 
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
                 "| Starcounter | 991 | Pf |" + Environment.NewLine + 
                 "| Siba | 992 | Pg |";
 
             SQLTestCase query3 = new SQLQuery();
-            query3.description = "Test 3";
-            query3.statement = "SELECT * FROM Location l";
-            query3.expectedResults = 
+            query3.Description = "Test 3";
+            query3.Statement = "SELECT * FROM Location l";
+            query3.ExpectedResults = 
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
                 "| Sweden | 989 | Pd |" + Environment.NewLine + 
                 "| Norway | 990 | Pe |";

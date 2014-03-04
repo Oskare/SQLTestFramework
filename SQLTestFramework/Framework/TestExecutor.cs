@@ -13,7 +13,7 @@ namespace SQLTestFramework.Framework
     // TODO: Read/Write internal parameters + parameter validator
     class TestExecutor: ITestExecutor
     {
-        const int ExecutionIterations = 2;
+        const int ExecutionIterations = 3;
 
         /// <summary>
         /// Execute tests in parallel and store the results
@@ -37,7 +37,7 @@ namespace SQLTestFramework.Framework
                 {
                     Console.WriteLine("Starting execution run " + i);
                     foreach (SQLTestCase test in tests){
-                        test.Execute(Convert.ToBoolean(i));
+                        test.Execute();
                     }
                     Console.WriteLine("Execution run " + i + " finished");
                 }
