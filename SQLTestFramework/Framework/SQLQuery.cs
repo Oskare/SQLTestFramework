@@ -13,23 +13,31 @@ namespace SQLTestFramework.Framework
     /// </summary>
     class SQLQuery : SQLTestCase
     {
+        public String ExpectedExecutionPlan { get; set; }
+        public List<String> ActualExecutionPlan { get; set; }
+
         public SQLQuery()
         {
             DataManipulation = false;
-            Description = null;
-            Statement = null;
+            Description = "";
+            Statement = "";
             VariableValues = null;
-            ExpectedResults = null;
+            ExpectedResults = "";
             ActualResults = new List<string>();
+
+            ExpectedExecutionPlan = "";
+            ActualExecutionPlan = new List<string>();
         }
 
         public override Boolean EvaluateResults()
         {
             String expectedResultsNoWhitespace = Regex.Replace(ExpectedResults, "\\s", "");
+            String expectedExecutionPlanNoWhitespace = Regex.Replace(ExpectedExecutionPlan, "\\s", "");
 
             for (int i = 0; i < ActualResults.Count; i++)
             {
-                if (expectedResultsNoWhitespace != Regex.Replace(ActualResults[i], "\\s", "")) 
+                if (expectedResultsNoWhitespace != Regex.Replace(ActualResults[i], "\\s", "") ||
+                    expectedExecutionPlanNoWhitespace != Regex.Replace(ActualExecutionPlan[i], "\\s", "")) 
                 {
                     Passed = false;
                     return Passed;
@@ -47,7 +55,7 @@ namespace SQLTestFramework.Framework
                 SqlEnumerator<dynamic> resultEnumerator = Db.SQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
                
                 ActualResults.Add(Utilities.GetResultString(resultEnumerator));
-                // executionPlan = resultEnumerator.ToString();
+                ActualExecutionPlan.Add(resultEnumerator.ToString());
             }
             catch (Exception e) // Should catch ScErrUnsupportLiteral, use SlowSQL since the statement contains literals
             {
@@ -56,6 +64,7 @@ namespace SQLTestFramework.Framework
                 SqlEnumerator<dynamic> resultEnumerator = Db.SlowSQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
 
                 ActualResults.Add(Utilities.GetResultString(resultEnumerator));
+                ActualExecutionPlan.Add(resultEnumerator.ToString());
             }
         }
 
@@ -63,11 +72,17 @@ namespace SQLTestFramework.Framework
         {
             String summary = "Description: " + Description + Environment.NewLine +
                 "Statement: " + Statement + Environment.NewLine +
-                "Expected: " + Environment.NewLine + ExpectedResults + Environment.NewLine;
+                "Expected results: " + Environment.NewLine + ExpectedResults + Environment.NewLine;
 
             for (int i = 0; i < ActualResults.Count; i++)
             {
-                summary += "Actual " + (i+1) + ": " + Environment.NewLine + ActualResults[i];
+                summary += "Actual results " + (i+1) + ": " + Environment.NewLine + ActualResults[i];
+            }
+
+            summary += "Expected execution plan: " + Environment.NewLine + ExpectedExecutionPlan + Environment.NewLine;
+            for (int i = 0; i < ActualExecutionPlan.Count; i++)
+            {
+                summary += "Actual execution plan " + (i+1) + ": " + Environment.NewLine + ActualExecutionPlan[i];
             }
 
             return summary;
