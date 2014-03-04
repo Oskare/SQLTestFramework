@@ -29,6 +29,10 @@ namespace SQLTestFramework.Framework
             ActualExecutionPlan = new List<string>();
         }
 
+        /// <summary>
+        /// Evaluate results by comparing properties of the object
+        /// </summary>
+        /// <returns>True if the expected values match the actual values of the properties, indicating that the test passed</returns>
         public override Boolean EvaluateResults()
         {
             String expectedResultsNoWhitespace = Regex.Replace(ExpectedResults, "\\s", "");
@@ -54,24 +58,25 @@ namespace SQLTestFramework.Framework
             return Passed;
         }
 
+        /// <summary>
+        /// Execute the test case represented by an object. 
+        /// </summary>
         public override void Execute()
         {
+            SqlEnumerator<dynamic> resultEnumerator;
             try
             {
-                SqlEnumerator<dynamic> resultEnumerator = Db.SQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
-               
-                ActualResults.Add(Utilities.GetResultString(resultEnumerator));
-                ActualExecutionPlan.Add(resultEnumerator.ToString());
+                resultEnumerator = Db.SQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>; 
             }
             catch (Exception e) // Should catch ScErrUnsupportLiteral, use SlowSQL since the statement contains literals
             {
                 // TODO: Store internal parameter indicating the existence of literals and check this on next execution to avoid exceptions
                 Console.WriteLine(e.Message);
-                SqlEnumerator<dynamic> resultEnumerator = Db.SlowSQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
-
-                ActualResults.Add(Utilities.GetResultString(resultEnumerator));
-                ActualExecutionPlan.Add(resultEnumerator.ToString());
+                resultEnumerator = Db.SlowSQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
             }
+
+            ActualResults.Add(Utilities.GetResultString(resultEnumerator));
+            ActualExecutionPlan.Add(resultEnumerator.ToString());
         }
 
         public override string ToString()
