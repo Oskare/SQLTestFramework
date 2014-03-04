@@ -9,7 +9,7 @@ namespace SQLTestFramework.Framework
     /// <summary>
     /// Abstract class to be inherited by all different test case classes
     /// </summary>
-    public abstract class SQLTestCase
+    public abstract class ISQLTestCase
     {
         public String Description { get; set; }
         public String Statement { get; set; }

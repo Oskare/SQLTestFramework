@@ -15,12 +15,12 @@ namespace SQLTestFramework.Framework
         /// Execute test cases in parallel ánd store results in the test case objects
         /// </summary>
         /// <param name="tests"> The tests to be executed </param>
-        void ExecutePar(List<SQLTestCase> tests);
+        void ExecutePar(List<ISQLTestCase> tests);
 
         /// <summary>
         /// Execute test cases sequentially, and store results in the test case objects
         /// </summary>
         /// <param name="tests"> The tests to be executed </param>
-        void ExecuteSeq(List<SQLTestCase> tests);
+        void ExecuteSeq(List<ISQLTestCase> tests);
     }
 }

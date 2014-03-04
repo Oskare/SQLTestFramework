@@ -9,17 +9,17 @@ namespace SQLTestFramework.Framework
     /// <summary>
     /// Validate test case execution results with expected results
     /// </summary>
-    class ResultValidator: IResultValidator
+    public class ResultValidator: IResultValidator
     {
         /// <summary>
         /// Returns all failed tests
         /// </summary>
         /// <param name="tests"></param>
         /// <returns>A list of failed tests</returns>
-        public List<SQLTestCase> EvaluateTests(List<SQLTestCase> tests)
+        public List<ISQLTestCase> EvaluateTests(List<ISQLTestCase> tests)
         {
-            List<SQLTestCase> failedTests = new List<SQLTestCase>();
-            foreach (SQLTestCase test in tests)
+            List<ISQLTestCase> failedTests = new List<ISQLTestCase>();
+            foreach (ISQLTestCase test in tests)
             {
                 if (!test.EvaluateResults())
                 {

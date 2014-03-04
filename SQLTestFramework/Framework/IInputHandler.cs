@@ -11,6 +11,6 @@ namespace SQLTestFramework.Framework
     /// </summary>
     public interface IInputHandler
     {
-        List<SQLTestCase> ReadTests(String filename="");
+        List<ISQLTestCase> ReadTests(String filename="");
     }
 }

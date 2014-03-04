@@ -17,11 +17,11 @@ namespace SQLTestFramework.Framework
         /// </summary>
         /// <param name="tests">List of all tests run</param>
         /// <param name="failedTests">List of all failed tests</param>
-        public void Output(List<SQLTestCase> tests, List<SQLTestCase> failedTests)
+        public void Output(List<ISQLTestCase> tests, List<ISQLTestCase> failedTests)
         {
             Console.WriteLine(Environment.NewLine + "OUTPUT:");
 
-            foreach (SQLTestCase test in failedTests)
+            foreach (ISQLTestCase test in failedTests)
             {
                 Console.WriteLine(test);
             }

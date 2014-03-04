@@ -11,7 +11,7 @@ namespace SQLTestFramework.Framework
     /// <summary>
     /// Class representing SQL test queries
     /// </summary>
-    public class SQLQuery : SQLTestCase
+    public class SQLQuery : ISQLTestCase
     {
         public String ExpectedExecutionPlan { get; set; }
         public List<String> ActualExecutionPlan { get; set; }

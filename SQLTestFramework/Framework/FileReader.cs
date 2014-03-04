@@ -17,9 +17,9 @@ namespace SQLTestFramework.Framework
         /// </summary>
         /// <param name="filename">The file to read test from</param>
         /// <returns>A list of SQLTestCase representing every test in the input file</returns>
-        public List<SQLTestCase> ReadTests(string filename)
+        public List<ISQLTestCase> ReadTests(string filename)
         {
-            List<SQLTestCase> inputList = new List<SQLTestCase>();
+            List<ISQLTestCase> inputList = new List<ISQLTestCase>();
 
             // TODO: Factory should instantiate the correct class implementing SQLTestCase
             SQLQuery query1 = new SQLQuery();

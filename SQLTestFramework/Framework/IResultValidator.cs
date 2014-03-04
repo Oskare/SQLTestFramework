@@ -11,6 +11,6 @@ namespace SQLTestFramework.Framework
     /// </summary>
     public interface IResultValidator
     {
-        List<SQLTestCase> EvaluateTests(List<SQLTestCase> tests);
+        List<ISQLTestCase> EvaluateTests(List<ISQLTestCase> tests);
     }
 }
