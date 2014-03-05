@@ -73,11 +73,23 @@ namespace SQLTestFramework.Framework
             catch (Exception e) // Should catch ScErrUnsupportLiteral, use SlowSQL since the statement contains literals
             {
                 // TODO: Store internal parameter indicating the existence of literals and check this on next execution to avoid exceptions
-                Console.WriteLine(e.Message);
+                Console.WriteLine("ExecuteSQL: " + e.Message);
                 resultEnumerator = Db.SlowSQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
             }
-            List<String> resultList = Utilities.CreateResultList(resultEnumerator);
-            ActualResults.Add(Utilities.GetResultString(resultList, usesOrderBy));
+
+            string result;
+            try
+            {
+                result = Utilities.GetResults(resultEnumerator, usesOrderBy);
+            }
+            catch (Exception e) // Make new exception
+            {
+                // TODO: Store internal parameter indicating single object projection
+                Console.WriteLine("GetResults: " + e.Message);
+                result = Utilities.GetSingleElementResults(resultEnumerator, usesOrderBy);
+            }
+
+            ActualResults.Add(result);
             ActualExecutionPlan.Add(resultEnumerator.ToString());
         }
 
