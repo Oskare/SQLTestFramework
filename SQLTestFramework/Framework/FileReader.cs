@@ -21,7 +21,6 @@ namespace SQLTestFramework.Framework
         {
             List<ISQLTestCase> inputList = new List<ISQLTestCase>();
 
-            // TODO: Factory should instantiate the correct class implementing SQLTestCase
             SQLQuery query1 = new SQLQuery();
             query1.Description = "Test 1";
             query1.Statement = "SELECT * FROM Person p ORDER BY Name DESC";
@@ -120,10 +119,159 @@ namespace SQLTestFramework.Framework
                 "Ascending" +
                 ")";
 
+            SQLQuery query4 = new SQLQuery();
+            query4.Description = "Test 4";
+            query4.Statement = "SELECT * FROM Person p WHERE Name=?";
+            query4.VariableValues = new Object[] { "Albert" };
+            query4.usesOrderBy = false;
+            query4.ExpectedResults =
+                "| 0:String | 1:UInt64 | 2:String |" +
+                "| Albert | 987 | Pb |";
+            query4.ExpectedExecutionPlan = "Tables(" +
+                "0 = SQLTestFramework.Framework.Person" +
+                ")" +
+                "Projection(" +
+                "0 = " +
+                "StringProperty(0, Name)" +
+                "1 = " +
+                "ObjectNoProperty(0, ObjectNo)" +
+                "2 = " +
+                "ObjectIDProperty(0, ObjectID)" +
+                ")" +
+                "FullTableScan(" +
+                "auto ON SQLTestFramework.Framework.Person" +
+                "0" +
+                "ComparisonString(" +
+                "Equal" +
+                "StringProperty(0, Name)" +
+                "StringVariable(Albert)" +
+                ")" +
+                "Ascending" +
+                ")";
+
+
+            SQLQuery query5 = new SQLQuery();
+            query5.Description = "Test 5";
+            query5.Statement = "SELECT Name, ObjectID FROM Person p WHERE Name=?";
+            query5.VariableValues = new Object[] { "Albert" };
+            query5.usesOrderBy = false;
+            query5.ExpectedResults =
+                "| 0:String | 1:String |" +
+                "| Albert | Pb |";
+            query5.ExpectedExecutionPlan = "Tables(" +
+                "0 = SQLTestFramework.Framework.Person" +
+                ")" +
+                "Projection(" +
+                "0 = " +
+                "StringProperty(0, Name)" +
+                "1 = " +
+                "ObjectIDProperty(0, ObjectID)" +
+                ")" +
+                "FullTableScan(" +
+                "auto ON SQLTestFramework.Framework.Person" +
+                "0" +
+                "ComparisonString(" +
+                "Equal" +
+                "StringProperty(0, Name)" +
+                "StringVariable(Albert)" +
+                ")" +
+                "Ascending" +
+                ")";
+
+
+            SQLQuery query6 = new SQLQuery();
+            query6.Description = "Test 6";
+            query6.Statement = "SELECT Name FROM Person p WHERE Name=?";
+            query6.VariableValues = new Object[] { "Albert" };
+            query6.usesOrderBy = false;
+            query6.ExpectedResults =
+                "| String |" + Environment.NewLine +
+                "| Albert |";
+            query6.ExpectedExecutionPlan = "Tables(" +
+                "0 = SQLTestFramework.Framework.Person" +
+                ")" +
+                "Projection(" +
+                "0 = " +
+                "StringProperty(0, Name)" +
+                ")" +
+                "FullTableScan(" +
+                "auto ON SQLTestFramework.Framework.Person" +
+                "0" +
+                "ComparisonString(" +
+                "Equal" +
+                "StringProperty(0, Name)" +
+                "StringVariable(Albert)" +
+                ")" +
+                "Ascending" +
+                ")";
+
+
+            SQLQuery query7 = new SQLQuery();
+            query7.Description = "Test 7";
+            query7.Statement = "SELECT Name FROM Person p";
+            query7.usesOrderBy = false;
+            query7.ExpectedResults =
+                "| String |" + Environment.NewLine +
+                "| Albert |" + Environment.NewLine +
+                "| Einstein |";
+            query7.ExpectedExecutionPlan = "Tables(" +
+                "0 = SQLTestFramework.Framework.Person" +
+                ")" +
+                "Projection(" +
+                "0 = " +
+                "StringProperty(0, Name)" +
+                ")" +
+                "IndexScan(" +
+                "auto ON SQLTestFramework.Framework.Person" +
+                "0" +
+                "__id" +
+                "UIntegerDynamicRange(" +
+                ")" +
+                "LogicalValue(TRUE)" +
+                "Ascending" +
+                ")";
+
+
+            SQLQuery query8 = new SQLQuery();
+            query8.Description = "Test 8";
+            query8.Statement = "SELECT Name FROM Person p ORDER BY Name DESC";
+            query8.usesOrderBy = true;
+            query8.ExpectedResults =
+                "| String |" + Environment.NewLine +
+                "| Einstein |" + Environment.NewLine + 
+                "| Albert |";
+            query8.ExpectedExecutionPlan = "Tables(" +
+                "0 = SQLTestFramework.Framework.Person" +
+                ")" +
+                "Projection(" +
+                "0 = " +
+                "StringProperty(0, Name)" +
+                ")" +
+                "Sort(" +
+                "IndexScan(" +
+                "auto ON SQLTestFramework.Framework.Person" +
+                "0" +
+                "__id" +
+                "UIntegerDynamicRange(" +
+                ")" +
+                "LogicalValue(TRUE)" +
+                "Ascending" +
+                ")" +
+                "StringComparer(" +
+                "StringProperty(0, Name)" +
+                "Descending" +
+                ")" +
+                ")";
+
 
             inputList.Add(query1);
             inputList.Add(query2);
             inputList.Add(query3);
+            inputList.Add(query4);
+            inputList.Add(query5);
+            inputList.Add(query6);
+            inputList.Add(query7);
+            inputList.Add(query8);
 
             return inputList;
         }
