@@ -15,6 +15,7 @@ namespace SQLTestFramework.Framework
     {
         public String ExpectedExecutionPlan { get; set; }
         public List<String> ActualExecutionPlan { get; set; }
+        public Boolean usesOrderBy { get; set; }
 
         public SQLQuery()
         {
@@ -27,6 +28,7 @@ namespace SQLTestFramework.Framework
 
             ExpectedExecutionPlan = "";
             ActualExecutionPlan = new List<string>();
+            usesOrderBy = false;
         }
 
         /// <summary>
@@ -74,8 +76,8 @@ namespace SQLTestFramework.Framework
                 Console.WriteLine(e.Message);
                 resultEnumerator = Db.SlowSQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
             }
-
-            ActualResults.Add(Utilities.GetResultString(resultEnumerator));
+            List<String> resultList = Utilities.CreateResultList(resultEnumerator);
+            ActualResults.Add(Utilities.GetResultString(resultList, usesOrderBy));
             ActualExecutionPlan.Add(resultEnumerator.ToString());
         }
 

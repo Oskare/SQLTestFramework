@@ -13,89 +13,120 @@ namespace SQLTestFramework.Framework
     /// </summary>
     public static class Utilities
     {
-        // TODO: Null checks and specify formats
+        private const String separator = "|";
+
+        // TODO: Null checks and specify formats. Use string builder instead of concatenation for performance?
         /// <summary>
         /// Extracts a string representation of the results of a SQL query (statement?)
         /// </summary>
-        /// <param name="resultSet"></param>
-        /// <returns></returns>
-        public static String GetResultString(SqlEnumerator<dynamic> resultSet)
+        /// <param name="resultSet">The result of an SQL statement execution</param>
+        /// <returns>A string representation of the results contained in the input SqlEnumerator</returns>
+        public static List<String> CreateResultList(SqlEnumerator<dynamic> resultSet)
         {
             ITypeBinding typeBind;
             IPropertyBinding propBind;
-            String result = "";
+            List<String> result = new List<string>();
+            string row = "";
 
+            // Extract column names and types
             typeBind = resultSet.TypeBinding;
             for (int i = 0; i < typeBind.PropertyCount; i++)
             {
                 propBind = typeBind.GetPropertyBinding(i);
-                result += "| " + propBind.Name + ":" + propBind.TypeCode.ToString() + " ";
+                row += separator + " " + propBind.Name + ":" + propBind.TypeCode.ToString() + " ";
             }
-            result += "|" + Environment.NewLine;
+            row += separator + Environment.NewLine;
+            result.Add(row);
 
+            // Extract values
             while (resultSet.MoveNext())
             {
+                row = "";
                 typeBind = resultSet.TypeBinding;
                 for (int i = 0; i < typeBind.PropertyCount; i++)
                 {
-                    result += "| ";
+                    row += separator + " ";
                     propBind = typeBind.GetPropertyBinding(i);
                     switch (propBind.TypeCode)
                     {
                         case DbTypeCode.Binary:
-                            result += resultSet.Current.GetBinary(i);
+                            row += resultSet.Current.GetBinary(i);
                             break;
                         case DbTypeCode.Boolean:
-                            result += resultSet.Current.GetBoolean(i);
+                            row += resultSet.Current.GetBoolean(i);
                             break;
                         case DbTypeCode.Byte:
-                            result += resultSet.Current.GetByte(i);
+                            row += resultSet.Current.GetByte(i);
                             break;
                         case DbTypeCode.DateTime:
-                            result += resultSet.Current.GetDateTime(i);
+                            row += resultSet.Current.GetDateTime(i);
                             break;
                         case DbTypeCode.Decimal:
-                            result += resultSet.Current.GetDecimal(i);
+                            row += resultSet.Current.GetDecimal(i);
                             break;
                         case DbTypeCode.Double:
-                            result += resultSet.Current.GetDouble(i);
+                            row += resultSet.Current.GetDouble(i);
                             break;
                         case DbTypeCode.Int16:
-                            result += resultSet.Current.GetInt16(i);
+                            row += resultSet.Current.GetInt16(i);
                             break;
                         case DbTypeCode.Int32:
-                            result += resultSet.Current.GetInt32(i);
+                            row += resultSet.Current.GetInt32(i);
                             break;
                         case DbTypeCode.Int64:
-                            result += resultSet.Current.GetInt64(i);
+                            row += resultSet.Current.GetInt64(i);
                             break;
                         case DbTypeCode.Object:
-                            result += resultSet.Current.GetObject(i);
+                            row += resultSet.Current.GetObject(i);
                             break;
                         case DbTypeCode.SByte:
-                            result += resultSet.Current.GetSByte(i);
+                            row += resultSet.Current.GetSByte(i);
                             break;
                         case DbTypeCode.Single:
-                            result += resultSet.Current.GetSingle(i);
+                            row += resultSet.Current.GetSingle(i);
                             break;
                         case DbTypeCode.String:
-                            result += resultSet.Current.GetString(i);
+                            row += resultSet.Current.GetString(i);
                             break;
                         case DbTypeCode.UInt16:
-                            result += resultSet.Current.GetUInt16(i);
+                            row += resultSet.Current.GetUInt16(i);
                             break;
                         case DbTypeCode.UInt32:
-                            result += resultSet.Current.GetUInt32(i);
+                            row += resultSet.Current.GetUInt32(i);
                             break;
                         case DbTypeCode.UInt64:
-                            result += resultSet.Current.GetUInt64(i);
+                            row += resultSet.Current.GetUInt64(i);
                             break;
                         default:
                             break;
                     }
-                    result += " ";
+                    row += " ";
                 }
-                result += "|" + Environment.NewLine;
+                row += separator + Environment.NewLine;
+                result.Add(row);
+            }
+            return result;
+        }
+
+        // TODO: Use string builder instead of concatenation for performance?
+        /// <summary>
+        /// Generate a single string from a list of strings.
+        /// </summary>
+        /// <param name="resultList">The list of strings to be used for the result</param>
+        /// <param name="ignoreSorting">True if the current order of strings should be kept in the result</param>
+        /// <returns></returns>
+        public static String GetResultString(List<String> resultList, Boolean ignoreSorting)
+        {
+            string result = "";
+
+            if (!ignoreSorting)
+            {
+                resultList.Sort(); // TODO: Specify sorting
+            }
+
+            foreach (string row in resultList)
+            {
+                result += row;
             }
             return result;
         }

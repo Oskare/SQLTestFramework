@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SQLTestFramework.Framework
 {
     /// <summary>
-    /// Input implementation which reads all test cases from .txt files
+    /// Input handler implementation that reads all test cases from .txt files
     /// </summary>
     class FileReader: IInputHandler
     {
@@ -24,13 +24,14 @@ namespace SQLTestFramework.Framework
             // TODO: Factory should instantiate the correct class implementing SQLTestCase
             SQLQuery query1 = new SQLQuery();
             query1.Description = "Test 1";
-            query1.Statement = "SELECT * FROM Person p";
+            query1.Statement = "SELECT * FROM Person p ORDER BY Name DESC";
+            query1.usesOrderBy = true;
             query1.ExpectedResults = 
-                "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
-                "| Albert | 987 | Pb |" + Environment.NewLine + 
-                "| Einstein | 988 | Pc |";
+                "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine + 
+                "| Einstein | 988 | Pc |" + Environment.NewLine + 
+                "| Albert | 987 | Pb |";
             query1.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Framework.Person " +
+                "0 = SQLTestFramework.Framework.Person" +
                 ")" +
                 "Projection(" +
                 "0 = " +
@@ -40,6 +41,7 @@ namespace SQLTestFramework.Framework
                 "2 = " +
                 "ObjectIDProperty(0, ObjectID)" +
                 ")" +
+                "Sort(" +
                 "IndexScan(" +
                 "auto ON SQLTestFramework.Framework.Person" +
                 "0" +
@@ -47,12 +49,17 @@ namespace SQLTestFramework.Framework
                 "UIntegerDynamicRange(" +
                 ")" +
                 "LogicalValue(TRUE)" +
-                "Ascending" +
+                "Ascending )" +
+                "StringComparer(" +
+                "StringProperty(0, Name)" +
+                "Descending" +
+                ")" +
                 ")";
 
             SQLQuery query2 = new SQLQuery();
             query2.Description = "Test 2";
-            query2.Statement = "SELECT * FROM Company c";
+            query2.Statement = "SELECT * FROM Company c ORDER BY CompanyName DESC";
+            query2.usesOrderBy = true;
             query2.ExpectedResults = 
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
                 "| Starcounter | 991 | Pf |" + Environment.NewLine + 
@@ -68,6 +75,7 @@ namespace SQLTestFramework.Framework
                 "2 = " +
                 "ObjectIDProperty(0, ObjectID)" +
                 ")" +
+                "Sort(" +
                 "IndexScan(" +
                 "auto ON SQLTestFramework.Framework.Company" +
                 "0" +
@@ -76,15 +84,21 @@ namespace SQLTestFramework.Framework
                 ")" +
                 "LogicalValue(TRUE)" +
                 "Ascending" +
+                ")" +
+                "StringComparer(" +
+                "StringProperty(0, CompanyName)" +
+                "Descending" +
+                ")" +
                 ")";
 
             SQLQuery query3 = new SQLQuery();
             query3.Description = "Test 3";
             query3.Statement = "SELECT * FROM Location l";
+            query3.usesOrderBy = false;
             query3.ExpectedResults = 
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
-                "| Sweden | 989 | Pd |" + Environment.NewLine + 
-                "| Norway | 990 | Pe |";
+                "| Norway | 990 | Pe |" + Environment.NewLine + 
+                "| Sweden | 989 | Pd |";
             query3.ExpectedExecutionPlan = "Tables(" +
                 "0 = SQLTestFramework.Framework.Location" +
                 ")" +
