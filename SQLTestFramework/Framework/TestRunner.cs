@@ -18,6 +18,12 @@ namespace SQLTestFramework.Framework
         private static IResultValidator resultValidator;
         private static IOutputHandler outputHandler;
 
+        // TODO: Add proper logging
+        public static void Log(String text)
+        {
+            Console.WriteLine("TestRunner: " + text);
+        }
+
         /// <summary>
         /// Initialize the system by storing the objects to use for different parts of the system.
         /// </summary>
@@ -43,19 +49,27 @@ namespace SQLTestFramework.Framework
             ComponentNullCheck();
 
             // Read tests from input
+            Log("Reading tests from input");
             testList = inputHandler.ReadTests(filename);
+            Log("Read " + testList.Count + " tests");
 
             // Run tests in parallel
+            Log("Executing tests");
             testExecutor.ExecuteSeq(testList);
             //testExecutor.ExecutePar(testList);
+            Log("Test execution finished");
 
-            // Get failed tests
+            // Get failed/generated tests
+            Log("Validating tests");
             validationResults = resultValidator.EvaluateTests(testList);
             failedTests = validationResults.Item1;
             generatedTests = validationResults.Item2;
+            Log("Test validation finished");
 
             // Output
+            Log("Writing output");
             outputHandler.Output(testList, failedTests, generatedTests);
+            Log("Test run finished");
         }
 
         /// <summary>
@@ -66,21 +80,25 @@ namespace SQLTestFramework.Framework
             if (inputHandler == null)
             {
                 inputHandler = new FileReader();
+                Log("No InputHandler supplied, using standard implementation");
             }
 
             if (testExecutor == null)
             {
                 testExecutor = new TestExecutor();
+                Log("No TestExecutor supplied, using standard implementation");
             }
 
             if (resultValidator == null)
             {
                 resultValidator = new ResultValidator();
+                Log("No ResultValidator supplied, using standard implementation");
             }
 
             if (outputHandler == null)
             {
                 outputHandler = new FileWriter();
+                Log("No OutputHandler supplied, using standard implementation");
             }
         }
     }
