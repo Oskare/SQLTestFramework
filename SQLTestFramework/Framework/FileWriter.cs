@@ -25,6 +25,7 @@ namespace SQLTestFramework.Framework
             {
                 Console.WriteLine(test);
             }
+            Console.WriteLine("");
 
             foreach (ISQLTestCase test in generatedTests)
             {

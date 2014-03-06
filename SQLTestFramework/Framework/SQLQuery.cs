@@ -24,7 +24,9 @@ namespace SQLTestFramework.Framework
             Statement = "";
             VariableValues = null;
             ExpectedResults = "";
+            ExpectedException = "";
             ActualResults = new List<string>();
+            ActualException = new List<string>();
 
             ExpectedExecutionPlan = "";
             ActualExecutionPlan = new List<string>();
@@ -39,14 +41,14 @@ namespace SQLTestFramework.Framework
         {
             String expectedResultsNoWhitespace = Regex.Replace(ExpectedResults, "\\s", "");
             String expectedExecutionPlanNoWhitespace = Regex.Replace(ExpectedExecutionPlan, "\\s", "");
+            String expectedExceptionNoWhitespace = Regex.Replace(ExpectedException, "\\s", "");
 
-            if (ActualResults.Count == 0)
-            {
-                throw new Exception("No actual result exists");
-            }
+            if (ActualResults.Count == 0 && ActualException.Count == 0)
+                throw new Exception("No result/exceptions exists");
 
-            // Evaluate results
-            if (expectedResultsNoWhitespace == "GENERATE" || expectedExecutionPlanNoWhitespace == "GENERATE")
+            if (expectedResultsNoWhitespace == "GENERATE" || 
+                expectedExecutionPlanNoWhitespace == "GENERATE" ||
+                ExpectedException == "GENERATE")
             {
                 Result = TestResult.Generated;
                 return Result;
@@ -57,6 +59,14 @@ namespace SQLTestFramework.Framework
                 {
                     if (expectedResultsNoWhitespace != Regex.Replace(ActualResults[i], "\\s", "") ||
                         expectedExecutionPlanNoWhitespace != Regex.Replace(ActualExecutionPlan[i], "\\s", ""))
+                    {
+                        Result = TestResult.Failed;
+                        return Result;
+                    }
+                }
+                for (int i = 0; i < ActualException.Count; i++)
+                {
+                    if (expectedExceptionNoWhitespace != Regex.Replace(ActualException[i], "\\s", ""))
                     {
                         Result = TestResult.Failed;
                         return Result;
@@ -73,32 +83,39 @@ namespace SQLTestFramework.Framework
         /// </summary>
         public override void Execute()
         {
-            SqlEnumerator<dynamic> resultEnumerator;
             try
             {
-                resultEnumerator = Db.SQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>; 
-            }
-            catch (Exception e) // Should catch ScErrUnsupportLiteral, use SlowSQL since the statement contains literals
-            {
-                // TODO: Store internal parameter indicating the existence of literals and check this on next execution to avoid exceptions
-                Console.WriteLine("ExecuteSQL: " + e.Message);
-                resultEnumerator = Db.SlowSQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
-            }
+                SqlEnumerator<dynamic> resultEnumerator;
+                try
+                {
+                    resultEnumerator = Db.SQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
+                }
+                catch (Exception e) // Should catch ScErrUnsupportLiteral, use SlowSQL since the statement contains literals
+                {
+                    // TODO: Store internal parameter indicating the existence of literals and check this on next execution to avoid exceptions
+                    Console.WriteLine("ExecuteSQL: " + e.Message);
+                    resultEnumerator = Db.SlowSQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
+                }       
 
-            string result;
-            try
-            {
-                result = Utilities.GetResults(resultEnumerator, usesOrderBy);
-            }
-            catch (Exception e) // Make new exception
-            {
-                // TODO: Store internal parameter indicating single object projection
-                Console.WriteLine("GetResults: " + e.Message);
-                result = Utilities.GetSingleElementResults(resultEnumerator, usesOrderBy);
-            }
+                string result;
+                try
+                {
+                    result = Utilities.GetResults(resultEnumerator, usesOrderBy);
+                }
+                catch (Exception e) // Make new exception
+                {
+                    // TODO: Store internal parameter indicating single object projection
+                    Console.WriteLine("GetResults: " + e.Message);
+                    result = Utilities.GetSingleElementResults(resultEnumerator, usesOrderBy);
+                }
 
-            ActualResults.Add(result);
-            ActualExecutionPlan.Add(resultEnumerator.ToString());
+                ActualResults.Add(result);
+                ActualExecutionPlan.Add(resultEnumerator.ToString());
+            }
+            catch (Exception e) // Should catch expected exceptions
+            {
+                ActualException.Add(e.Message);
+            }
         }
 
         public override string ToString()
@@ -109,30 +126,28 @@ namespace SQLTestFramework.Framework
             if (Result == ISQLTestCase.TestResult.Generated)
             {
                 for (int i = 0; i < ActualResults.Count; i++)
-                {
                     summary += "Generated results " + (i + 1) + ": " + Environment.NewLine + ActualResults[i];
-                }
 
                 for (int i = 0; i < ActualExecutionPlan.Count; i++)
-                {
                     summary += "Generated execution plan " + (i + 1) + ": " + Environment.NewLine + ActualExecutionPlan[i];
-                }
+
+                for (int i = 0; i < ActualException.Count; i++)
+                    summary += "Generated exception " + (i + 1) + ": " + Environment.NewLine + ActualException[i];
             }
             else
             {
                 summary += "Expected results: " + Environment.NewLine + ExpectedResults + Environment.NewLine;
                 for (int i = 0; i < ActualResults.Count; i++)
-                {
                     summary += "Actual results " + (i + 1) + ": " + Environment.NewLine + ActualResults[i];
-                }
 
                 summary += "Expected execution plan: " + Environment.NewLine + ExpectedExecutionPlan + Environment.NewLine;
                 for (int i = 0; i < ActualExecutionPlan.Count; i++)
-                {
                     summary += "Actual execution plan " + (i + 1) + ": " + Environment.NewLine + ActualExecutionPlan[i];
-                }
-            }
 
+                summary += "Expected exeption: " + Environment.NewLine + ExpectedException + Environment.NewLine;
+                for (int i = 0; i < ActualException.Count; i++)
+                    summary += "Actual exception " + (i + 1) + ": " + Environment.NewLine + ActualException[i] + Environment.NewLine;
+            }
             return summary;
         }
 

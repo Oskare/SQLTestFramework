@@ -19,8 +19,11 @@ namespace SQLTestFramework.Framework
         public Object[] VariableValues { get; set; }
         public Boolean DataManipulation { get; set; }
         public String ExpectedResults { get; set; }
+        public String ExpectedException { get; set; }
 
         public List<String> ActualResults { get; set; }
+        public List<String> ActualException { get; set; }
+        // public List<String> ActualFullExceptions { get; set; }
 
         public TestResult Result { get; set; }
         // ...

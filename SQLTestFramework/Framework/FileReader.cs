@@ -149,7 +149,6 @@ namespace SQLTestFramework.Framework
                 "Ascending" +
                 ")";
 
-
             SQLQuery query5 = new SQLQuery();
             query5.Description = "Test 5";
             query5.Statement = "SELECT Name, ObjectID FROM Person p WHERE Name=?";
@@ -178,7 +177,6 @@ namespace SQLTestFramework.Framework
                 "Ascending" +
                 ")";
 
-
             SQLQuery query6 = new SQLQuery();
             query6.Description = "Test 6";
             query6.Statement = "SELECT Name FROM Person p WHERE Name=?";
@@ -205,7 +203,6 @@ namespace SQLTestFramework.Framework
                 "Ascending" +
                 ")";
 
-
             SQLQuery query7 = new SQLQuery();
             query7.Description = "Test 7";
             query7.Statement = "SELECT Name FROM Person p";
@@ -230,7 +227,6 @@ namespace SQLTestFramework.Framework
                 "LogicalValue(TRUE)" +
                 "Ascending" +
                 ")";
-
 
             SQLQuery query8 = new SQLQuery();
             query8.Description = "Test 8";
@@ -270,6 +266,20 @@ namespace SQLTestFramework.Framework
             query9.ExpectedResults = "GENERATE ";
             query9.ExpectedExecutionPlan = " GENERATE";
 
+            SQLQuery query10 = new SQLQuery();
+            query10.Description = "Test 10";
+            query10.Statement = "SELECT p FROM Person p where p.Name >= object 15";
+            query10.VariableValues = new Object[0];
+            query10.usesOrderBy = false;
+            query10.ExpectedException = "Failed to process query: SELECT p FROM Person p where p.Name >= object 15: Incorrect arguments of types string and object(unknown) to operator greaterThanOrEqual.";
+
+            SQLQuery query11= new SQLQuery();
+            query11.Description = "Test 11";
+            query11.Statement = "SELECT p FROM Person p where p.Name >= object 15";
+            query11.VariableValues = new Object[0];
+            query11.usesOrderBy = false;
+            query11.ExpectedException = "GENERATE";
+
 
             queryList.Add(query1);
             queryList.Add(query2);
@@ -280,6 +290,8 @@ namespace SQLTestFramework.Framework
             queryList.Add(query7);
             queryList.Add(query8);
             queryList.Add(query9);
+            queryList.Add(query10);
+            queryList.Add(query11);
 
             return queryList;
         }
