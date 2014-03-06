@@ -34,30 +34,38 @@ namespace SQLTestFramework.Framework
         /// <summary>
         /// Evaluate results by comparing properties of the object
         /// </summary>
-        /// <returns>True if the expected values match the actual values of the properties, indicating that the test passed</returns>
-        public override Boolean EvaluateResults()
+        /// <returns>A TestResult value indicating the outcome of the test case run</returns>
+        public override TestResult EvaluateResults()
         {
             String expectedResultsNoWhitespace = Regex.Replace(ExpectedResults, "\\s", "");
             String expectedExecutionPlanNoWhitespace = Regex.Replace(ExpectedExecutionPlan, "\\s", "");
 
-            Passed = false;
-
             if (ActualResults.Count == 0)
             {
-                return Passed;
+                throw new Exception("No actual result exists");
             }
 
-            for (int i = 0; i < ActualResults.Count; i++)
+            // Evaluate results
+            if (expectedResultsNoWhitespace == "GENERATE" || expectedExecutionPlanNoWhitespace == "GENERATE")
             {
-                if (expectedResultsNoWhitespace != Regex.Replace(ActualResults[i], "\\s", "") ||
-                    expectedExecutionPlanNoWhitespace != Regex.Replace(ActualExecutionPlan[i], "\\s", "")) 
+                Result = TestResult.Generated;
+                return Result;
+            }
+            else
+            {
+                for (int i = 0; i < ActualResults.Count; i++)
                 {
-                    return Passed;
+                    if (expectedResultsNoWhitespace != Regex.Replace(ActualResults[i], "\\s", "") ||
+                        expectedExecutionPlanNoWhitespace != Regex.Replace(ActualExecutionPlan[i], "\\s", ""))
+                    {
+                        Result = TestResult.Failed;
+                        return Result;
+                    }
                 }
             }
 
-            Passed = true;
-            return Passed;
+            Result = TestResult.Passed;
+            return Result;
         }
 
         /// <summary>
@@ -96,18 +104,33 @@ namespace SQLTestFramework.Framework
         public override string ToString()
         {
             String summary = "Description: " + Description + Environment.NewLine +
-                "Statement: " + Statement + Environment.NewLine +
-                "Expected results: " + Environment.NewLine + ExpectedResults + Environment.NewLine;
+                "Statement: " + Statement + Environment.NewLine;
 
-            for (int i = 0; i < ActualResults.Count; i++)
+            if (Result == ISQLTestCase.TestResult.Generated)
             {
-                summary += "Actual results " + (i+1) + ": " + Environment.NewLine + ActualResults[i];
+                for (int i = 0; i < ActualResults.Count; i++)
+                {
+                    summary += "Generated results " + (i + 1) + ": " + Environment.NewLine + ActualResults[i];
+                }
+
+                for (int i = 0; i < ActualExecutionPlan.Count; i++)
+                {
+                    summary += "Generated execution plan " + (i + 1) + ": " + Environment.NewLine + ActualExecutionPlan[i];
+                }
             }
-
-            summary += "Expected execution plan: " + Environment.NewLine + ExpectedExecutionPlan + Environment.NewLine;
-            for (int i = 0; i < ActualExecutionPlan.Count; i++)
+            else
             {
-                summary += "Actual execution plan " + (i+1) + ": " + Environment.NewLine + ActualExecutionPlan[i];
+                summary += "Expected results: " + Environment.NewLine + ExpectedResults + Environment.NewLine;
+                for (int i = 0; i < ActualResults.Count; i++)
+                {
+                    summary += "Actual results " + (i + 1) + ": " + Environment.NewLine + ActualResults[i];
+                }
+
+                summary += "Expected execution plan: " + Environment.NewLine + ExpectedExecutionPlan + Environment.NewLine;
+                for (int i = 0; i < ActualExecutionPlan.Count; i++)
+                {
+                    summary += "Actual execution plan " + (i + 1) + ": " + Environment.NewLine + ActualExecutionPlan[i];
+                }
             }
 
             return summary;

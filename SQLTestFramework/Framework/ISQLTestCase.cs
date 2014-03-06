@@ -11,6 +11,9 @@ namespace SQLTestFramework.Framework
     /// </summary>
     public abstract class ISQLTestCase
     {
+        public enum TestResult { Passed, Failed, Generated };
+
+        // TODO: Make non-public if possible
         public String Description { get; set; }
         public String Statement { get; set; }
         public Object[] VariableValues { get; set; }
@@ -19,10 +22,10 @@ namespace SQLTestFramework.Framework
 
         public List<String> ActualResults { get; set; }
 
-        public Boolean Passed { get; set; }
+        public TestResult Result { get; set; }
         // ...
 
-        public abstract Boolean EvaluateResults();
+        public abstract TestResult EvaluateResults();
 
         public abstract void Execute();
     }

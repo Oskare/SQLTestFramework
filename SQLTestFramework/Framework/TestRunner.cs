@@ -10,6 +10,8 @@ namespace SQLTestFramework.Framework
     {
         private static List<ISQLTestCase> testList;
         private static List<ISQLTestCase> failedTests;
+        private static List<ISQLTestCase> generatedTests;
+        private static Tuple<List<ISQLTestCase>, List<ISQLTestCase>> validationResults;
 
         private static IInputHandler inputHandler;
         private static ITestExecutor testExecutor;
@@ -48,10 +50,12 @@ namespace SQLTestFramework.Framework
             //testExecutor.ExecutePar(testList);
 
             // Get failed tests
-            failedTests = resultValidator.EvaluateTests(testList);
+            validationResults = resultValidator.EvaluateTests(testList);
+            failedTests = validationResults.Item1;
+            generatedTests = validationResults.Item2;
 
             // Output
-            outputHandler.Output(testList, failedTests);
+            outputHandler.Output(testList, failedTests, generatedTests);
         }
 
         /// <summary>

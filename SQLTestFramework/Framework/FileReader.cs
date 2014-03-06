@@ -19,7 +19,7 @@ namespace SQLTestFramework.Framework
         /// <returns>A list of SQLTestCase representing every test in the input file</returns>
         public List<ISQLTestCase> ReadTests(string filename)
         {
-            List<ISQLTestCase> inputList = new List<ISQLTestCase>();
+            List<ISQLTestCase> queryList = new List<ISQLTestCase>();
 
             SQLQuery query1 = new SQLQuery();
             query1.Description = "Test 1";
@@ -238,7 +238,7 @@ namespace SQLTestFramework.Framework
             query8.usesOrderBy = true;
             query8.ExpectedResults =
                 "| String |" + Environment.NewLine +
-                "| Einstein |" + Environment.NewLine + 
+                "| Einstein |" + Environment.NewLine +
                 "| Albert |";
             query8.ExpectedExecutionPlan = "Tables(" +
                 "0 = SQLTestFramework.Framework.Person" +
@@ -263,17 +263,25 @@ namespace SQLTestFramework.Framework
                 ")" +
                 ")";
 
+            SQLQuery query9 = new SQLQuery();
+            query9.Description = "Test 9";
+            query9.Statement = "SELECT * FROM Person p";
+            query9.usesOrderBy = false;
+            query9.ExpectedResults = "GENERATE ";
+            query9.ExpectedExecutionPlan = " GENERATE";
 
-            inputList.Add(query1);
-            inputList.Add(query2);
-            inputList.Add(query3);
-            inputList.Add(query4);
-            inputList.Add(query5);
-            inputList.Add(query6);
-            inputList.Add(query7);
-            inputList.Add(query8);
 
-            return inputList;
+            queryList.Add(query1);
+            queryList.Add(query2);
+            queryList.Add(query3);
+            queryList.Add(query4);
+            queryList.Add(query5);
+            queryList.Add(query6);
+            queryList.Add(query7);
+            queryList.Add(query8);
+            queryList.Add(query9);
+
+            return queryList;
         }
     }
 }
