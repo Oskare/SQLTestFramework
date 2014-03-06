@@ -49,7 +49,7 @@ namespace SQLTestFramework.Framework
             String expectedExceptionNoWhitespace = Regex.Replace(ExpectedException, "\\s", "");
 
             if (ActualResults.Count == 0 && ActualException.Count == 0)
-                throw new Exception("No result/exceptions exists");
+                throw new ArgumentException("No results or exceptions from statement execution exists");
 
             if (expectedResultsNoWhitespace == "GENERATE" || 
                 expectedExecutionPlanNoWhitespace == "GENERATE" ||
@@ -90,17 +90,17 @@ namespace SQLTestFramework.Framework
         /// </summary>
         public override void Execute()
         {
+            SqlEnumerator<dynamic> resultEnumerator = null;
             try
             {
-                SqlEnumerator<dynamic> resultEnumerator;
                 try
                 {
                     resultEnumerator = Db.SQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
                 }
-                catch (Exception e) // Should catch ScErrUnsupportLiteral, use SlowSQL since the statement contains literals
+                catch (SqlException e) // Catch ScErrUnsupportLiteral error and use SlowSQL since the statement contains literals
                 {
                     // TODO: Store internal parameter indicating the existence of literals and check this on next execution to avoid exceptions
-                    Console.WriteLine("ExecuteSQL: " + e.Message);
+                    Console.WriteLine("Execute statement: " + e.Message);
                     resultEnumerator = Db.SlowSQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
                 }       
 
@@ -109,7 +109,7 @@ namespace SQLTestFramework.Framework
                 {
                     result = Utilities.GetResults(resultEnumerator, UsesOrderBy);
                 }
-                catch (Exception e) // Make new exception
+                catch (NullReferenceException e) // Catch exception indicating that the result set contains single element rows
                 {
                     // TODO: Store internal parameter indicating single object projection
                     Console.WriteLine("GetResults: " + e.Message);
@@ -120,9 +120,15 @@ namespace SQLTestFramework.Framework
                 ActualExecutionPlan.Add(resultEnumerator.ToString());
                 ActuallyUsesBisonParser.Add(resultEnumerator.IsBisonParserUsed);
             }
-            catch (Exception e) // Should catch expected exceptions
+            catch (SqlException exception) // Catch actual exceptions when executing statements
             {
-                ActualException.Add(e.Message);
+                Console.WriteLine("Actual exception: " + exception.Message);
+                ActualException.Add(exception.Message);
+            }
+            finally
+            {
+                if (resultEnumerator != null)
+                    resultEnumerator.Dispose();
             }
         }
 

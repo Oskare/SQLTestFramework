@@ -85,7 +85,7 @@ namespace SQLTestFramework.Framework
                         row += (Nullable<UInt64>) resultSet.Current;
                         break;
                     default:
-                        throw new Exception(); // TODO
+                        throw new ArgumentException("Invalid typeCode in result set") ;
                 }
                 row += " " + separator + Environment.NewLine;
                 result.Add(row);
@@ -178,7 +178,7 @@ namespace SQLTestFramework.Framework
                             row += resultSet.Current.GetUInt64(i);
                             break;
                         default:
-                            break;
+                            throw new ArgumentException("Invalid typeCode in result set");
                     }
                     row += " ";
                 }
@@ -195,7 +195,7 @@ namespace SQLTestFramework.Framework
         /// <param name="resultList">The list of strings to be used for the result</param>
         /// <param name="ignoreSorting">True if the current order of strings should be kept in the result</param>
         /// <returns></returns>
-        public static String GetResultString(String header, List<String> resultList, Boolean ignoreSorting)
+        private static String GetResultString(String header, List<String> resultList, Boolean ignoreSorting)
         {
             string result = "";
 
