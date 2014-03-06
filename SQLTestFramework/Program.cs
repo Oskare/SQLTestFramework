@@ -10,7 +10,7 @@ namespace SQLTestFramework
             //TestPopulation.Clear();
             //TestPopulation.Populate();
 
-            TestRunner.Initialize(new FileReader(), new TestExecutor(), new ResultValidator(), new FileWriter());
+            TestRunner.Initialize(input: new FileReader(), output: new FileWriter());
             TestRunner.RunTest("testfile");
         }
     }

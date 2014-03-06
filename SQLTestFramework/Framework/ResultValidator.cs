@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SQLTestFramework.Framework
 {
     /// <summary>
-    /// Validate test case execution results with expected results
+    /// Validates test case execution results with expected results
     /// </summary>
     class ResultValidator: IResultValidator
     {
@@ -16,24 +16,28 @@ namespace SQLTestFramework.Framework
         /// </summary>
         /// <param name="tests"></param>
         /// <returns>A list of failed tests</returns>
-        public Tuple<List<ISQLTestCase>, List<ISQLTestCase>> EvaluateTests(List<ISQLTestCase> tests)
+        public Tuple<List<SQLTestCase>, List<SQLTestCase>> EvaluateTests(List<SQLTestCase> tests)
         {
-            List<ISQLTestCase> failedTests = new List<ISQLTestCase>();
-            List<ISQLTestCase> generatedTests = new List<ISQLTestCase>();
+            List<SQLTestCase> failedTests = new List<SQLTestCase>();
+            List<SQLTestCase> generatedTests = new List<SQLTestCase>();
 
-            foreach (ISQLTestCase test in tests)
+            foreach (SQLTestCase test in tests)
             {
                 switch (test.EvaluateResults())
                 {
-                    case ISQLTestCase.TestResult.Failed:
+                    case SQLTestCase.TestResult.Failed:
                         failedTests.Add(test);
                         break;
-                    case ISQLTestCase.TestResult.Generated:
+                    case SQLTestCase.TestResult.Generated:
                         generatedTests.Add(test);
                         break;
+                    case SQLTestCase.TestResult.Passed:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("Undefined test case result");
                 }
             }
-            return new Tuple<List<ISQLTestCase>,List<ISQLTestCase>>(failedTests, generatedTests);
+            return new Tuple<List<SQLTestCase>,List<SQLTestCase>>(failedTests, generatedTests);
         }
     }
 }

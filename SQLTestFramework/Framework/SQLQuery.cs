@@ -11,7 +11,7 @@ namespace SQLTestFramework.Framework
     /// <summary>
     /// Class representing SQL test queries
     /// </summary>
-    public class SQLQuery : ISQLTestCase
+    public class SQLQuery : SQLTestCase
     {
         // Some of these should perhaps be moved into the interface
         public String ExpectedExecutionPlan { get; set; }
@@ -22,24 +22,24 @@ namespace SQLTestFramework.Framework
 
         public SQLQuery()
         {
-            DataManipulation = false;
             Description = "";
             Statement = "";
             VariableValues = null;
+            DataManipulation = false;
+            UsesOrderBy = false;
+            UsesBisonParser = false;
             ExpectedResults = "";
             ExpectedException = "";
-            UsesBisonParser = false;
+            ExpectedExecutionPlan = "";
+
+            ActuallyUsesBisonParser = new List<Boolean>();
             ActualResults = new List<string>();
             ActualException = new List<string>();
-            ActuallyUsesBisonParser = new List<Boolean>();
-
-            ExpectedExecutionPlan = "";
             ActualExecutionPlan = new List<string>();
-            UsesOrderBy = false;
         }
 
         /// <summary>
-        /// Evaluate results by comparing properties of the object
+        /// Evaluate results by comparing results stored in the object
         /// </summary>
         /// <returns>A TestResult value indicating the outcome of the test case run</returns>
         public override TestResult EvaluateResults()
@@ -97,10 +97,10 @@ namespace SQLTestFramework.Framework
                 {
                     resultEnumerator = Db.SQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
                 }
-                catch (SqlException e) // Catch ScErrUnsupportLiteral error and use SlowSQL since the statement contains literals
+                catch (SqlException e) // Catches ScErrUnsupportLiteral error and use SlowSQL since the statement contains literals
                 {
                     // TODO: Store internal parameter indicating the existence of literals and check this on next execution to avoid exceptions
-                    Console.WriteLine("Execute statement: " + e.Message);
+                    //Console.WriteLine("Execute statement: " + e.Message);
                     resultEnumerator = Db.SlowSQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
                 }       
 
@@ -109,10 +109,10 @@ namespace SQLTestFramework.Framework
                 {
                     result = Utilities.GetResults(resultEnumerator, UsesOrderBy);
                 }
-                catch (NullReferenceException e) // Catch exception indicating that the result set contains single element rows
+                catch (NullReferenceException e) // Catches exception indicating that the result set contains single element rows
                 {
                     // TODO: Store internal parameter indicating single object projection
-                    Console.WriteLine("GetResults: " + e.Message);
+                    //Console.WriteLine("GetResults: " + e.Message);
                     result = Utilities.GetSingleElementResults(resultEnumerator, UsesOrderBy);
                 }
 
@@ -122,7 +122,7 @@ namespace SQLTestFramework.Framework
             }
             catch (SqlException exception) // Catch actual exceptions when executing statements
             {
-                Console.WriteLine("Actual exception: " + exception.Message);
+                //Console.WriteLine("Actual exception: " + exception.Message);
                 ActualException.Add(exception.Message);
             }
             finally
@@ -137,7 +137,7 @@ namespace SQLTestFramework.Framework
             String summary = "Description: " + Description + Environment.NewLine +
                 "Statement: " + Statement + Environment.NewLine;
 
-            if (Result == ISQLTestCase.TestResult.Generated)
+            if (Result == SQLTestCase.TestResult.Generated)
             {
                 for (int i = 0; i < ActualResults.Count; i++)
                     summary += "Generated results " + (i + 1) + ": " + Environment.NewLine + ActualResults[i];
@@ -169,6 +169,5 @@ namespace SQLTestFramework.Framework
             return summary;
         }
 
-        
     }
 }

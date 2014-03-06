@@ -19,7 +19,7 @@ namespace SQLTestFramework.Framework
         /// Execute tests in parallel and store the results
         /// </summary>
         /// <param name="tests">List of tests to be executed.</param>
-        public void ExecutePar(List<ISQLTestCase> tests)
+        public void ExecutePar(List<SQLTestCase> tests)
         {
             throw new NotImplementedException();
         }
@@ -28,18 +28,18 @@ namespace SQLTestFramework.Framework
         /// Execute tests sequentially and store the results.
         /// </summary>
         /// <param name="tests">List of tests to be executed.</param>
-        public void ExecuteSeq(List<ISQLTestCase> tests)
+        public void ExecuteSeq(List<SQLTestCase> tests)
         {
             Db.Transaction(delegate
             {
-                // temporary loggging
                 for (int i = 0; i < ExecutionIterations; i++)
                 {
-                    Console.WriteLine("Starting execution run " + i);
-                    foreach (ISQLTestCase test in tests){
+                    Console.WriteLine("TestExecutor: Execution run " + i + " starting");
+                    foreach (SQLTestCase test in tests){
+                        // TODO: Fetch internal parameters and add to test case object
                         test.Execute();
                     }
-                    Console.WriteLine("Execution run " + i + " finished");
+                    Console.WriteLine("TestExecutor: Execution run " + i + " finished");
                 }
             });
         }

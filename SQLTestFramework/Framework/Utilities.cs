@@ -9,7 +9,7 @@ using Starcounter;
 namespace SQLTestFramework.Framework
 {
     /// <summary>
-    /// Contains utility functions useful throughout the framework
+    /// Contains utility functions used throughout the framework
     /// </summary>
     public static class Utilities
     {
@@ -96,7 +96,7 @@ namespace SQLTestFramework.Framework
 
         // TODO: Null checks and specify formats. Use string builder instead of concatenation for performance?
         /// <summary>
-        /// Extracts a string representation of the results of a SQL query (statement?). Works on single object projection
+        /// Extracts a string representation of the results of a SQL query (statement?). Works with single object projection
         /// </summary>
         /// <param name="resultSet">The result of an SQL statement execution</param>
         /// <returns>A string representation of the results contained in the input SqlEnumerator</returns>
@@ -110,7 +110,6 @@ namespace SQLTestFramework.Framework
 
             // Extract column names and types
             typeBind = resultSet.TypeBinding;
-
             for (int i = 0; i < typeBind.PropertyCount; i++)
             {
                 propBind = typeBind.GetPropertyBinding(i);
@@ -201,7 +200,7 @@ namespace SQLTestFramework.Framework
 
             if (!ignoreSorting)
             {
-                resultList.Sort(); // TODO: Specify sorting
+                resultList.Sort();
             }
 
             foreach (string row in resultList)

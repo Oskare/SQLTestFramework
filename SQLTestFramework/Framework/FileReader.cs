@@ -17,9 +17,9 @@ namespace SQLTestFramework.Framework
         /// </summary>
         /// <param name="filename">The file to read test from</param>
         /// <returns>A list of SQLTestCase representing every test in the input file</returns>
-        public List<ISQLTestCase> ReadTests(string filename)
+        public List<SQLTestCase> ReadTests(string filename)
         {
-            List<ISQLTestCase> queryList = new List<ISQLTestCase>();
+            List<SQLTestCase> queryList = new List<SQLTestCase>();
 
             SQLQuery query1 = new SQLQuery();
             query1.Description = "Test 1";

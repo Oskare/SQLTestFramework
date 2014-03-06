@@ -7,29 +7,25 @@ using System.Threading.Tasks;
 namespace SQLTestFramework.Framework
 {
     /// <summary>
-    /// Abstract class to be inherited by all different test case classes
+    /// Abstract class to be inherited by all test case classes
     /// </summary>
-    public abstract class ISQLTestCase
+    public abstract class SQLTestCase
     {
         public enum TestResult { Passed, Failed, Generated };
 
-        // TODO: Make non-public if possible
         public String Description { get; set; }
         public String Statement { get; set; }
         public Object[] VariableValues { get; set; }
         public Boolean DataManipulation { get; set; }
         public String ExpectedResults { get; set; }
         public String ExpectedException { get; set; }
-
-        public List<String> ActualResults { get; set; }
-        public List<String> ActualException { get; set; }
-        // public List<String> ActualFullExceptions { get; set; }
-
         public TestResult Result { get; set; }
-        // ...
+
+        protected List<String> ActualResults;
+        protected List<String> ActualException;
+        // protected List<String> ActualFullExceptions;
 
         public abstract TestResult EvaluateResults();
-
         public abstract void Execute();
     }
 }

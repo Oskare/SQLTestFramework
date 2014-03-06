@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace SQLTestFramework.Framework
 {
     /// <summary>
-    /// Interface to be implemented by component creating SQLTestCase's from some user input
+    /// Interface to be implemented by components reading test cases from user input
     /// </summary>
     public interface IInputHandler
     {
-        List<ISQLTestCase> ReadTests(String filename="");
+        List<SQLTestCase> ReadTests(String filename);
     }
 }

@@ -8,10 +8,10 @@ namespace SQLTestFramework.Framework
 {
     public static class TestRunner
     {
-        private static List<ISQLTestCase> testList;
-        private static List<ISQLTestCase> failedTests;
-        private static List<ISQLTestCase> generatedTests;
-        private static Tuple<List<ISQLTestCase>, List<ISQLTestCase>> validationResults;
+        private static List<SQLTestCase> testList;
+        private static List<SQLTestCase> failedTests;
+        private static List<SQLTestCase> generatedTests;
+        private static Tuple<List<SQLTestCase>, List<SQLTestCase>> validationResults;
 
         private static IInputHandler inputHandler;
         private static ITestExecutor testExecutor;
@@ -38,6 +38,36 @@ namespace SQLTestFramework.Framework
             testExecutor = executor;
             resultValidator = validator;
             outputHandler = output;
+        }
+
+        /// <summary>
+        /// Replace any null components with the standard components
+        /// </summary>
+        public static void ComponentNullCheck()
+        {
+            if (inputHandler == null)
+            {
+                inputHandler = new FileReader();
+                Log("No InputHandler supplied, using standard implementation");
+            }
+
+            if (testExecutor == null)
+            {
+                testExecutor = new TestExecutor();
+                Log("No TestExecutor supplied, using standard implementation");
+            }
+
+            if (resultValidator == null)
+            {
+                resultValidator = new ResultValidator();
+                Log("No ResultValidator supplied, using standard implementation");
+            }
+
+            if (outputHandler == null)
+            {
+                outputHandler = new FileWriter();
+                Log("No OutputHandler supplied, using standard implementation");
+            }
         }
 
         /// <summary>
@@ -70,36 +100,6 @@ namespace SQLTestFramework.Framework
             Log("Writing output");
             outputHandler.Output(testList, failedTests, generatedTests);
             Log("Test run finished");
-        }
-
-        /// <summary>
-        /// Replace any null components with the standard components
-        /// </summary>
-        public static void ComponentNullCheck()
-        {
-            if (inputHandler == null)
-            {
-                inputHandler = new FileReader();
-                Log("No InputHandler supplied, using standard implementation");
-            }
-
-            if (testExecutor == null)
-            {
-                testExecutor = new TestExecutor();
-                Log("No TestExecutor supplied, using standard implementation");
-            }
-
-            if (resultValidator == null)
-            {
-                resultValidator = new ResultValidator();
-                Log("No ResultValidator supplied, using standard implementation");
-            }
-
-            if (outputHandler == null)
-            {
-                outputHandler = new FileWriter();
-                Log("No OutputHandler supplied, using standard implementation");
-            }
         }
     }
 }
