@@ -13,9 +13,12 @@ namespace SQLTestFramework.Framework
     /// </summary>
     public class SQLQuery : ISQLTestCase
     {
+        // Some of these should perhaps be moved into the interface
         public String ExpectedExecutionPlan { get; set; }
         public List<String> ActualExecutionPlan { get; set; }
-        public Boolean usesOrderBy { get; set; }
+        public Boolean UsesOrderBy { get; set; }
+        public Boolean UsesBisonParser { get; set; }
+        public List<Boolean> ActuallyUsesBisonParser { get; set; }
 
         public SQLQuery()
         {
@@ -25,12 +28,14 @@ namespace SQLTestFramework.Framework
             VariableValues = null;
             ExpectedResults = "";
             ExpectedException = "";
+            UsesBisonParser = false;
             ActualResults = new List<string>();
             ActualException = new List<string>();
+            ActuallyUsesBisonParser = new List<Boolean>();
 
             ExpectedExecutionPlan = "";
             ActualExecutionPlan = new List<string>();
-            usesOrderBy = false;
+            UsesOrderBy = false;
         }
 
         /// <summary>
@@ -50,6 +55,7 @@ namespace SQLTestFramework.Framework
                 expectedExecutionPlanNoWhitespace == "GENERATE" ||
                 ExpectedException == "GENERATE")
             {
+                // Store use of bison parser internally
                 Result = TestResult.Generated;
                 return Result;
             }
@@ -58,7 +64,8 @@ namespace SQLTestFramework.Framework
                 for (int i = 0; i < ActualResults.Count; i++)
                 {
                     if (expectedResultsNoWhitespace != Regex.Replace(ActualResults[i], "\\s", "") ||
-                        expectedExecutionPlanNoWhitespace != Regex.Replace(ActualExecutionPlan[i], "\\s", ""))
+                        expectedExecutionPlanNoWhitespace != Regex.Replace(ActualExecutionPlan[i], "\\s", "") ||
+                        UsesBisonParser != ActuallyUsesBisonParser[i])
                     {
                         Result = TestResult.Failed;
                         return Result;
@@ -100,17 +107,18 @@ namespace SQLTestFramework.Framework
                 string result;
                 try
                 {
-                    result = Utilities.GetResults(resultEnumerator, usesOrderBy);
+                    result = Utilities.GetResults(resultEnumerator, UsesOrderBy);
                 }
                 catch (Exception e) // Make new exception
                 {
                     // TODO: Store internal parameter indicating single object projection
                     Console.WriteLine("GetResults: " + e.Message);
-                    result = Utilities.GetSingleElementResults(resultEnumerator, usesOrderBy);
+                    result = Utilities.GetSingleElementResults(resultEnumerator, UsesOrderBy);
                 }
 
                 ActualResults.Add(result);
                 ActualExecutionPlan.Add(resultEnumerator.ToString());
+                ActuallyUsesBisonParser.Add(resultEnumerator.IsBisonParserUsed);
             }
             catch (Exception e) // Should catch expected exceptions
             {
@@ -136,6 +144,10 @@ namespace SQLTestFramework.Framework
             }
             else
             {
+                summary += "Expected use of bison parser: " + Environment.NewLine + UsesBisonParser + Environment.NewLine;
+                for (int i = 0; i < ActuallyUsesBisonParser.Count; i++)
+                    summary += "Actual use of bison parser " + (i + 1) + ": " + Environment.NewLine + ActuallyUsesBisonParser[i] + Environment.NewLine;
+
                 summary += "Expected results: " + Environment.NewLine + ExpectedResults + Environment.NewLine;
                 for (int i = 0; i < ActualResults.Count; i++)
                     summary += "Actual results " + (i + 1) + ": " + Environment.NewLine + ActualResults[i];
