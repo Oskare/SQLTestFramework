@@ -20,25 +20,28 @@ namespace SQLTestFramework.Framework
         /// <param name="generatedTests">List of all generated tests</param>
         public void Output(List<SQLTestCase> tests, List<SQLTestCase> failedTests, List<SQLTestCase> generatedTests)
         {
-            Console.WriteLine(Environment.NewLine + "OUTPUT:");
+            StringBuilder output = new StringBuilder();
 
-            Console.WriteLine("FAILED TEST CASES: ");
+            output.AppendLine(Environment.NewLine + "OUTPUT:" + Environment.NewLine);
+            output.AppendLine("FAILED TEST CASES: ");
             foreach (SQLTestCase test in failedTests)
-                Console.WriteLine(test);
+                output.AppendLine(test.ToString());
 
-            Console.WriteLine(Environment.NewLine + " GENERATED TEST CASES: ");
+            output.AppendLine(Environment.NewLine + " GENERATED TEST CASES: ");
             foreach (SQLTestCase test in generatedTests)
-                Console.WriteLine(test);
+                output.AppendLine(test.ToString());
 
             int total = tests.Count;
             int failed = failedTests.Count;
             int generated = generatedTests.Count;
             int passed = total - failed - generated;
 
-            Console.WriteLine(Environment.NewLine + total + " test cases executed: " + Environment.NewLine +
+            output.AppendLine(Environment.NewLine + total + " test cases executed: " + Environment.NewLine +
                 passed + " test cases passed, " + Environment.NewLine +
                 failed + " test cases failed, " + Environment.NewLine + 
                 generated + " test case results generated");
+
+            Console.Write(output.ToString());
         }
     }
 }

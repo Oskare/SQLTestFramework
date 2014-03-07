@@ -15,7 +15,7 @@ namespace SQLTestFramework.Framework
     {
         private const String separator = "|";
 
-        // TODO: Null checks and specify formats. Use string builder instead of concatenation for performance?
+        // TODO: Null checks and specify formats.
         /// <summary>
         /// Extracts a string representation of the results of an SQL query
         /// </summary>
@@ -26,7 +26,7 @@ namespace SQLTestFramework.Framework
         {
             DbTypeCode typeCode;
             List<String> result = new List<String>();
-            string headerRow = separator + " " + resultSet.ProjectionTypeCode + " " + separator + Environment.NewLine;
+            string headerRow = separator + " " + resultSet.ProjectionTypeCode + " " + separator;
             string row;
 
             // Extract values
@@ -88,14 +88,14 @@ namespace SQLTestFramework.Framework
                     default:
                         throw new ArgumentException("Invalid typeCode in result set") ;
                 }
-                row += " " + separator + Environment.NewLine;
+                row += " " + separator;
                 result.Add(row);
             }
             return GetResultString(headerRow, result, usesOrderBy);
         }
 
 
-        // TODO: Null checks and specify formats. Use string builder instead of concatenation for performance?
+        // TODO: Null checks and specify formats.
         /// <summary>
         /// Extracts a string representation of the results of an SQL query. Works with single object projection results
         /// </summary>
@@ -107,89 +107,88 @@ namespace SQLTestFramework.Framework
             ITypeBinding typeBind;
             IPropertyBinding propBind;
             List<String> result = new List<string>();
-            string header = "";
-            string row;
+            StringBuilder header = new StringBuilder();
+            StringBuilder row = new StringBuilder();
 
             // Extract column names and types
             typeBind = resultSet.TypeBinding;
             for (int i = 0; i < typeBind.PropertyCount; i++)
             {
                 propBind = typeBind.GetPropertyBinding(i);
-                header += separator + " " + propBind.Name + ":" + propBind.TypeCode.ToString() + " ";
+                header.Append(separator + " " + propBind.Name + ":" + propBind.TypeCode.ToString() + " ");
             }
-            header += separator + Environment.NewLine;
+            header.Append(separator);
 
             // Extract values
             while (resultSet.MoveNext())
             {
-                row = "";
+                row.Clear();
                 typeBind = resultSet.TypeBinding;
                 for (int i = 0; i < typeBind.PropertyCount; i++)
                 {
-                    row += separator + " ";
+                    row.Append(separator + " ");
                     propBind = typeBind.GetPropertyBinding(i);
                     switch (propBind.TypeCode)
                     {
                         case DbTypeCode.Binary:
-                            row += resultSet.Current.GetBinary(i);
+                            row.Append(resultSet.Current.GetBinary(i));
                             break;
                         case DbTypeCode.Boolean:
-                            row += resultSet.Current.GetBoolean(i);
+                            row.Append(resultSet.Current.GetBoolean(i));
                             break;
                         case DbTypeCode.Byte:
-                            row += resultSet.Current.GetByte(i);
+                            row.Append(resultSet.Current.GetByte(i));
                             break;
                         case DbTypeCode.DateTime:
-                            row += resultSet.Current.GetDateTime(i);
+                            row.Append(resultSet.Current.GetDateTime(i));
                             break;
                         case DbTypeCode.Decimal:
-                            row += resultSet.Current.GetDecimal(i);
+                            row.Append(resultSet.Current.GetDecimal(i));
                             break;
                         case DbTypeCode.Double:
-                            row += resultSet.Current.GetDouble(i);
+                            row.Append(resultSet.Current.GetDouble(i));
                             break;
                         case DbTypeCode.Int16:
-                            row += resultSet.Current.GetInt16(i);
+                            row.Append(resultSet.Current.GetInt16(i));
                             break;
                         case DbTypeCode.Int32:
-                            row += resultSet.Current.GetInt32(i);
+                            row.Append(resultSet.Current.GetInt32(i));
                             break;
                         case DbTypeCode.Int64:
-                            row += resultSet.Current.GetInt64(i);
+                            row.Append(resultSet.Current.GetInt64(i));
                             break;
                         case DbTypeCode.Object:
-                            row += resultSet.Current.GetObject(i);
+                            row.Append(resultSet.Current.GetObject(i));
                             break;
                         case DbTypeCode.SByte:
-                            row += resultSet.Current.GetSByte(i);
+                            row.Append(resultSet.Current.GetSByte(i));
                             break;
                         case DbTypeCode.Single:
-                            row += resultSet.Current.GetSingle(i);
+                            row.Append(resultSet.Current.GetSingle(i));
                             break;
                         case DbTypeCode.String:
-                            row += resultSet.Current.GetString(i);
+                            row.Append(resultSet.Current.GetString(i));
                             break;
                         case DbTypeCode.UInt16:
-                            row += resultSet.Current.GetUInt16(i);
+                            row.Append(resultSet.Current.GetUInt16(i));
                             break;
                         case DbTypeCode.UInt32:
-                            row += resultSet.Current.GetUInt32(i);
+                            row.Append(resultSet.Current.GetUInt32(i));
                             break;
                         case DbTypeCode.UInt64:
-                            row += resultSet.Current.GetUInt64(i);
+                            row.Append(resultSet.Current.GetUInt64(i));
                             break;
                         default:
                             throw new ArgumentException("Invalid typeCode in result set");
                     }
-                    row += " ";
+                    row.Append(" ");
                 }
-                row += separator + Environment.NewLine;
-                result.Add(row);
+                row.Append(separator);
+                result.Add(row.ToString());
             }
-            return GetResultString(header, result, usesOrderBy);
+            return GetResultString(header.ToString(), result, usesOrderBy);
         }
 
-        // TODO: Use string builder instead of concatenation for performance?
         /// <summary>
         /// Generate a single string from a list of strings.
         /// </summary>
@@ -200,18 +199,20 @@ namespace SQLTestFramework.Framework
         /// The contents of the resultList will be sorted if ignoreSorting is false</returns>
         private static String GetResultString(String header, List<String> resultList, Boolean ignoreSorting)
         {
-            string result = "";
+            StringBuilder result = new StringBuilder();
 
             if (!ignoreSorting)
             {
                 resultList.Sort();
             }
 
+            result.AppendLine(header);
             foreach (string row in resultList)
             {
-                result += row;
+                result.AppendLine(row);
             }
-            return header + result;
+
+            return result.ToString();
         }
     }
 }

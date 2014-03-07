@@ -134,39 +134,41 @@ namespace SQLTestFramework.Framework
 
         public override string ToString()
         {
-            String summary = "Description: " + Description + Environment.NewLine +
-                "Statement: " + Statement + Environment.NewLine;
+            StringBuilder summary = new StringBuilder();
+            
+            summary.AppendLine("Description: " + Description);
+            summary.AppendLine("Statement: " + Statement);
 
             if (Result == SQLTestCase.TestResult.Generated)
             {
                 for (int i = 0; i < ActualResults.Count; i++)
-                    summary += "Generated results " + (i + 1) + ": " + Environment.NewLine + ActualResults[i];
+                    summary.Append("Generated results " + (i + 1) + ": " + Environment.NewLine + ActualResults[i]);
 
                 for (int i = 0; i < ActualExecutionPlan.Count; i++)
-                    summary += "Generated execution plan " + (i + 1) + ": " + Environment.NewLine + ActualExecutionPlan[i];
+                    summary.Append("Generated execution plan " + (i + 1) + ": " + Environment.NewLine + ActualExecutionPlan[i]);
 
                 for (int i = 0; i < ActualException.Count; i++)
-                    summary += "Generated exception " + (i + 1) + ": " + Environment.NewLine + ActualException[i];
+                    summary.AppendLine("Generated exception " + (i + 1) + ": " + Environment.NewLine + ActualException[i]);
             }
             else
             {
-                summary += "Expected use of bison parser: " + Environment.NewLine + UsesBisonParser + Environment.NewLine;
+                summary.AppendLine("Expected use of bison parser: " + UsesBisonParser);
                 for (int i = 0; i < ActuallyUsesBisonParser.Count; i++)
-                    summary += "Actual use of bison parser " + (i + 1) + ": " + Environment.NewLine + ActuallyUsesBisonParser[i] + Environment.NewLine;
+                    summary.AppendLine("Actual use of bison parser " + (i + 1) + ": " + ActuallyUsesBisonParser[i]);
 
-                summary += "Expected results: " + Environment.NewLine + ExpectedResults + Environment.NewLine;
+                summary.AppendLine("Expected results: " + Environment.NewLine + ExpectedResults);
                 for (int i = 0; i < ActualResults.Count; i++)
-                    summary += "Actual results " + (i + 1) + ": " + Environment.NewLine + ActualResults[i];
+                    summary.Append("Actual results " + (i + 1) + ": " + Environment.NewLine + ActualResults[i]);
 
-                summary += "Expected execution plan: " + Environment.NewLine + ExpectedExecutionPlan + Environment.NewLine;
+                summary.AppendLine("Expected execution plan: " + Environment.NewLine + ExpectedExecutionPlan);
                 for (int i = 0; i < ActualExecutionPlan.Count; i++)
-                    summary += "Actual execution plan " + (i + 1) + ": " + Environment.NewLine + ActualExecutionPlan[i];
+                    summary.Append("Actual execution plan " + (i + 1) + ": " + Environment.NewLine + ActualExecutionPlan[i]);
 
-                summary += "Expected exeption: " + Environment.NewLine + ExpectedException + Environment.NewLine;
+                summary.AppendLine("Expected exeption: " + Environment.NewLine + ExpectedException);
                 for (int i = 0; i < ActualException.Count; i++)
-                    summary += "Actual exception " + (i + 1) + ": " + Environment.NewLine + ActualException[i] + Environment.NewLine;
+                    summary.Append("Actual exception " + (i + 1) + ": " + Environment.NewLine + ActualException[i]);
             }
-            return summary;
+            return summary.ToString();
         }
 
     }
