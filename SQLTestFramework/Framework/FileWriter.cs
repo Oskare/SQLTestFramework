@@ -13,10 +13,11 @@ namespace SQLTestFramework.Framework
     {
         /// <summary>
         /// STUB!!! (Prints all failed tests + summary)
-        /// Writes a test run result summary and failed tests to file.
+        /// Writes a test run result summary and failed and generated tests to file.
         /// </summary>
-        /// <param name="tests">List of all tests run</param>
+        /// <param name="tests">List of all run tests</param>
         /// <param name="failedTests">List of all failed tests</param>
+        /// <param name="generatedTests">List of all generated tests</param>
         public void Output(List<SQLTestCase> tests, List<SQLTestCase> failedTests, List<SQLTestCase> generatedTests)
         {
             Console.WriteLine(Environment.NewLine + "OUTPUT:");

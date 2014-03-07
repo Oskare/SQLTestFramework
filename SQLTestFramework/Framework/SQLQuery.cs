@@ -39,7 +39,7 @@ namespace SQLTestFramework.Framework
         }
 
         /// <summary>
-        /// Evaluate results by comparing results stored in the object
+        /// Evaluate results by comparing expected values to execution results stored in the object
         /// </summary>
         /// <returns>A TestResult value indicating the outcome of the test case run</returns>
         public override TestResult EvaluateResults()
@@ -86,7 +86,7 @@ namespace SQLTestFramework.Framework
         }
 
         /// <summary>
-        /// Execute the test case represented by an object. 
+        /// Execute the test case represented by the object, and store execution results and/or outcome.
         /// </summary>
         public override void Execute()
         {
@@ -97,7 +97,7 @@ namespace SQLTestFramework.Framework
                 {
                     resultEnumerator = Db.SQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
                 }
-                catch (SqlException e) // Catches ScErrUnsupportLiteral error and use SlowSQL since the statement contains literals
+                catch (SqlException e) // Catches ScErrUnsupportLiteral error to use SlowSQL since the statement contains literals
                 {
                     // TODO: Store internal parameter indicating the existence of literals and check this on next execution to avoid exceptions
                     //Console.WriteLine("Execute statement: " + e.Message);
@@ -120,7 +120,7 @@ namespace SQLTestFramework.Framework
                 ActualExecutionPlan.Add(resultEnumerator.ToString());
                 ActuallyUsesBisonParser.Add(resultEnumerator.IsBisonParserUsed);
             }
-            catch (SqlException exception) // Catch actual exceptions when executing statements
+            catch (SqlException exception) // Catch actual exceptions when executing queries
             {
                 //Console.WriteLine("Actual exception: " + exception.Message);
                 ActualException.Add(exception.Message);

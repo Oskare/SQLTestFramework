@@ -11,8 +11,12 @@ namespace SQLTestFramework.Framework
     /// </summary>
     public abstract class SQLTestCase
     {
+        /// <summary>
+        /// The possible test case outcomes
+        /// </summary>
         public enum TestResult { Passed, Failed, Generated };
 
+        // Test case information read from input
         public String Description { get; set; }
         public String Statement { get; set; }
         public Object[] VariableValues { get; set; }
@@ -21,6 +25,7 @@ namespace SQLTestFramework.Framework
         public String ExpectedException { get; set; }
         public TestResult Result { get; set; }
 
+        // Test case information gathered from execution
         protected List<String> ActualResults;
         protected List<String> ActualException;
         // protected List<String> ActualFullExceptions;

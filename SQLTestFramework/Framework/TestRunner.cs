@@ -8,10 +8,20 @@ namespace SQLTestFramework.Framework
 {
     public static class TestRunner
     {
+        /// <summary>
+        /// List of all test cases to be executed and evaluated
+        /// </summary>
         private static List<SQLTestCase> testList;
+
+        /// <summary>
+        /// List of all failed tests
+        /// </summary>
         private static List<SQLTestCase> failedTests;
+
+        /// <summary>
+        /// List of tests without expected results
+        /// </summary>
         private static List<SQLTestCase> generatedTests;
-        private static Tuple<List<SQLTestCase>, List<SQLTestCase>> validationResults;
 
         private static IInputHandler inputHandler;
         private static ITestExecutor testExecutor;
@@ -41,7 +51,7 @@ namespace SQLTestFramework.Framework
         }
 
         /// <summary>
-        /// Replace any null components with the standard components
+        /// Replace any undefined components with the standard component implementations
         /// </summary>
         public static void ComponentNullCheck()
         {
@@ -71,9 +81,10 @@ namespace SQLTestFramework.Framework
         }
 
         /// <summary>
-        /// 
+        /// Read, execute, evaluate and output results of the execution of all test cases. 
+        /// Calls inputHandler, TestExecutor, ResultValidator and OutputHandler components.
         /// </summary>
-        /// <param name="filename"></param>
+        /// <param name="filename">The file to read test cases from</param>
         public static void RunTest(String filename)
         {
             ComponentNullCheck();
@@ -91,7 +102,7 @@ namespace SQLTestFramework.Framework
 
             // Get failed/generated tests
             Log("Validating tests");
-            validationResults = resultValidator.EvaluateTests(testList);
+            Tuple<List<SQLTestCase>, List<SQLTestCase>> validationResults = resultValidator.EvaluateTests(testList);
             failedTests = validationResults.Item1;
             generatedTests = validationResults.Item2;
             Log("Test validation finished");

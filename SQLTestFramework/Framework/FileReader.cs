@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SQLTestFramework.Framework
 {
     /// <summary>
-    /// Input handler implementation that reads all test cases from .txt files
+    /// Input handler implementation that reads test cases from .txt file(s)
     /// </summary>
     class FileReader: IInputHandler
     {
@@ -25,12 +25,12 @@ namespace SQLTestFramework.Framework
             query1.Description = "Test 1";
             query1.Statement = "SELECT * FROM Person p ORDER BY Name DESC";
             query1.UsesOrderBy = true;
-            query1.ExpectedResults = 
-                "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine + 
-                "| Einstein | 988 | Pc |" + Environment.NewLine + 
-                "| Albert | 987 | Pb |";
+            query1.ExpectedResults =
+                "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
+                "| Einstein | 1006 | Pu |" + Environment.NewLine +
+                "| Albert | 1005 | Pt |";
             query1.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Framework.Person" +
+                "0 = SQLTestFramework.Person" +
                 ")" +
                 "Projection(" +
                 "0 = " +
@@ -42,13 +42,14 @@ namespace SQLTestFramework.Framework
                 ")" +
                 "Sort(" +
                 "IndexScan(" +
-                "auto ON SQLTestFramework.Framework.Person" +
+                "auto ON SQLTestFramework.Person" +
                 "0" +
                 "__id" +
                 "UIntegerDynamicRange(" +
                 ")" +
                 "LogicalValue(TRUE)" +
-                "Ascending )" +
+                "Ascending" +
+                ")" +
                 "StringComparer(" +
                 "StringProperty(0, Name)" +
                 "Descending" +
@@ -59,12 +60,12 @@ namespace SQLTestFramework.Framework
             query2.Description = "Test 2";
             query2.Statement = "SELECT * FROM Company c ORDER BY CompanyName DESC";
             query2.UsesOrderBy = true;
-            query2.ExpectedResults = 
+            query2.ExpectedResults =
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
-                "| Starcounter | 991 | Pf |" + Environment.NewLine + 
-                "| Siba | 992 | Pg |";
+                "| Starcounter | 1009 | Px |" + Environment.NewLine +
+                "| Siba | 1010 | Py |";
             query2.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Framework.Company" +
+                "0 = SQLTestFramework.Company" +
                 ")" +
                 "Projection(" +
                 "0 = " +
@@ -76,7 +77,7 @@ namespace SQLTestFramework.Framework
                 ")" +
                 "Sort(" +
                 "IndexScan(" +
-                "auto ON SQLTestFramework.Framework.Company" +
+                "auto ON SQLTestFramework.Company" +
                 "0" +
                 "__id" +
                 "UIntegerDynamicRange(" +
@@ -96,10 +97,10 @@ namespace SQLTestFramework.Framework
             query3.UsesOrderBy = false;
             query3.ExpectedResults = 
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
-                "| Norway | 990 | Pe |" + Environment.NewLine + 
-                "| Sweden | 989 | Pd |";
+                "| Norway | 1008 | Pw |" + Environment.NewLine + 
+                "| Sweden | 1007 | Pv |";
             query3.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Framework.Location" +
+                "0 = SQLTestFramework.Location" +
                 ")" +
                 "Projection(" +
                 "0 = " +
@@ -110,7 +111,7 @@ namespace SQLTestFramework.Framework
                 "ObjectIDProperty(0, ObjectID)" +
                 ")" +
                 "IndexScan(" +
-                "auto ON SQLTestFramework.Framework.Location" +
+                "auto ON SQLTestFramework.Location" +
                 "0" +
                 "__id" +
                 "UIntegerDynamicRange(" +
@@ -125,10 +126,10 @@ namespace SQLTestFramework.Framework
             query4.VariableValues = new Object[] { "Albert" };
             query4.UsesOrderBy = false;
             query4.ExpectedResults =
-                "| 0:String | 1:UInt64 | 2:String |" +
-                "| Albert | 987 | Pb |";
+                "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
+                "| Albert | 1005 | Pt |";
             query4.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Framework.Person" +
+                "0 = SQLTestFramework.Person" +
                 ")" +
                 "Projection(" +
                 "0 = " +
@@ -139,7 +140,7 @@ namespace SQLTestFramework.Framework
                 "ObjectIDProperty(0, ObjectID)" +
                 ")" +
                 "FullTableScan(" +
-                "auto ON SQLTestFramework.Framework.Person" +
+                "auto ON SQLTestFramework.Person" +
                 "0" +
                 "ComparisonString(" +
                 "Equal" +
@@ -155,10 +156,10 @@ namespace SQLTestFramework.Framework
             query5.VariableValues = new Object[] { "Albert" };
             query5.UsesOrderBy = false;
             query5.ExpectedResults =
-                "| 0:String | 1:String |" +
-                "| Albert | Pb |";
+                "| 0:String | 1:String |" + Environment.NewLine +
+                "| Albert | Pt |";
             query5.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Framework.Person" +
+                "0 = SQLTestFramework.Person" +
                 ")" +
                 "Projection(" +
                 "0 = " +
@@ -167,7 +168,7 @@ namespace SQLTestFramework.Framework
                 "ObjectIDProperty(0, ObjectID)" +
                 ")" +
                 "FullTableScan(" +
-                "auto ON SQLTestFramework.Framework.Person" +
+                "auto ON SQLTestFramework.Person" +
                 "0" +
                 "ComparisonString(" +
                 "Equal" +
@@ -186,14 +187,14 @@ namespace SQLTestFramework.Framework
                 "| String |" + Environment.NewLine +
                 "| Albert |";
             query6.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Framework.Person" +
+                "0 = SQLTestFramework.Person" +
                 ")" +
                 "Projection(" +
                 "0 = " +
                 "StringProperty(0, Name)" +
                 ")" +
                 "FullTableScan(" +
-                "auto ON SQLTestFramework.Framework.Person" +
+                "auto ON SQLTestFramework.Person" +
                 "0" +
                 "ComparisonString(" +
                 "Equal" +
@@ -212,14 +213,14 @@ namespace SQLTestFramework.Framework
                 "| Albert |" + Environment.NewLine +
                 "| Einstein |";
             query7.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Framework.Person" +
+                "0 = SQLTestFramework.Person" +
                 ")" +
                 "Projection(" +
                 "0 = " +
                 "StringProperty(0, Name)" +
                 ")" +
                 "IndexScan(" +
-                "auto ON SQLTestFramework.Framework.Person" +
+                "auto ON SQLTestFramework.Person" +
                 "0" +
                 "__id" +
                 "UIntegerDynamicRange(" +
@@ -237,7 +238,7 @@ namespace SQLTestFramework.Framework
                 "| Einstein |" + Environment.NewLine +
                 "| Albert |";
             query8.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Framework.Person" +
+                "0 = SQLTestFramework.Person" +
                 ")" +
                 "Projection(" +
                 "0 = " +
@@ -245,7 +246,7 @@ namespace SQLTestFramework.Framework
                 ")" +
                 "Sort(" +
                 "IndexScan(" +
-                "auto ON SQLTestFramework.Framework.Person" +
+                "auto ON SQLTestFramework.Person" +
                 "0" +
                 "__id" +
                 "UIntegerDynamicRange(" +
@@ -271,7 +272,9 @@ namespace SQLTestFramework.Framework
             query10.Statement = "SELECT p FROM Person p where p.Name >= object 15";
             query10.VariableValues = new Object[0];
             query10.UsesOrderBy = false;
-            query10.ExpectedException = "Failed to process query: SELECT p FROM Person p where p.Name >= object 15: Incorrect arguments of types string and object(unknown) to operator greaterThanOrEqual.";
+            query10.ExpectedException = "Failed to process query: " + 
+                "SELECT p FROM Person p where p.Name >= object 15: " +
+                "Incorrect arguments of types string and object(unknown) to operator greaterThanOrEqual.";
 
             SQLQuery query11= new SQLQuery();
             query11.Description = "Test 11";
@@ -287,10 +290,10 @@ namespace SQLTestFramework.Framework
             query12.UsesBisonParser = false; // This should be read from the internally stored parameters when that functionality is implemented.
             query12.ExpectedResults =
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
-                "| Einstein | 988 | Pc |" + Environment.NewLine +
-                "| Albert | 987 | Pb |";
+                "| Einstein | 1006 | Pu |" + Environment.NewLine +
+                "| Albert | 1005 | Pt |";
             query12.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Framework.Person" +
+                "0 = SQLTestFramework.Person" +
                 ")" +
                 "Projection(" +
                 "0 = " +
@@ -302,13 +305,14 @@ namespace SQLTestFramework.Framework
                 ")" +
                 "Sort(" +
                 "IndexScan(" +
-                "auto ON SQLTestFramework.Framework.Person" +
+                "auto ON SQLTestFramework.Person" +
                 "0" +
                 "__id" +
                 "UIntegerDynamicRange(" +
                 ")" +
                 "LogicalValue(TRUE)" +
-                "Ascending )" +
+                "Ascending" +
+                ")" +
                 "StringComparer(" +
                 "StringProperty(0, Name)" +
                 "Descending" +

@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace SQLTestFramework.Framework
 {
     /// <summary>
-    /// Validates test case execution results with expected results
+    /// Validates test case execution results
     /// </summary>
     class ResultValidator: IResultValidator
     {
         /// <summary>
-        /// Returns all failed tests
+        /// Get a list of failed tests and a list of generated tests
         /// </summary>
-        /// <param name="tests"></param>
-        /// <returns>A list of failed tests</returns>
+        /// <param name="tests">A list of all test cases</param>
+        /// <returns>A list of failed tests, and a list of generated tests</returns>
         public Tuple<List<SQLTestCase>, List<SQLTestCase>> EvaluateTests(List<SQLTestCase> tests)
         {
             List<SQLTestCase> failedTests = new List<SQLTestCase>();

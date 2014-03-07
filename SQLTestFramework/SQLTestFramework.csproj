@@ -9,7 +9,7 @@
     <ProjectGuid>{FBCD477A-EC5A-4A86-A5B3-9BE002F0FAC5}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SQLTestFramework</RootNamespace>
+    <RootNamespace>SQLTestFramework.Application</RootNamespace>
     <AssemblyName>SQLTestFramework</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

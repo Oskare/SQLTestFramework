@@ -5,14 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Starcounter;
 
-namespace SQLTestFramework.Framework
+namespace SQLTestFramework
 {
     /// <summary>
-    /// Class used to populate database with sample data.
+    /// Class used to populate a database with sample data.
     /// </summary>
     public static class TestPopulation
     {
-        public static void Clear()
+        /// <summary>
+        /// Deletes every record of any Person, Location and Company from a database
+        /// </summary>
+        public static void ClearTestData()
         {
             Db.Transaction(delegate
             {
@@ -34,7 +37,10 @@ namespace SQLTestFramework.Framework
             });
         }
 
-        public static void Populate()
+        /// <summary>
+        /// Populate a database with sample data
+        /// </summary>
+        public static void PopulateTestData()
         {
             Db.Transaction(delegate
             {
@@ -42,7 +48,7 @@ namespace SQLTestFramework.Framework
                 new Person() { Name = "Einstein" };
                 new Location() { Country = "Sweden" };
                 new Location() { Country = "Norway" };
-                new Company() { CompanyName = "Starcounter" };
+                new Company() { CompanyName = "Starcounter"};
                 new Company() { CompanyName = "Siba" };
             });
         }

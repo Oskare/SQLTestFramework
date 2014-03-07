@@ -13,6 +13,9 @@ namespace SQLTestFramework.Framework
     // TODO: Read/Write internal parameters + parameter validator
     class TestExecutor: ITestExecutor
     {
+        /// <summary>
+        /// The number of executions to do for each test case
+        /// </summary>
         const int ExecutionIterations = 2;
 
         /// <summary>

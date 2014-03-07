@@ -17,9 +17,10 @@ namespace SQLTestFramework.Framework
 
         // TODO: Null checks and specify formats. Use string builder instead of concatenation for performance?
         /// <summary>
-        /// Extracts a string representation of the results of a SQL query (statement?)
+        /// Extracts a string representation of the results of an SQL query
         /// </summary>
         /// <param name="resultSet">The result of an SQL statement execution</param>
+        /// <param name="usesOrderBy">A boolean indicating the use of the ORDER BY keyword in the query</param>
         /// <returns>A string representation of the results contained in the input SqlEnumerator</returns>
         public static string GetSingleElementResults(SqlEnumerator<dynamic> resultSet, Boolean usesOrderBy)
         {
@@ -96,9 +97,10 @@ namespace SQLTestFramework.Framework
 
         // TODO: Null checks and specify formats. Use string builder instead of concatenation for performance?
         /// <summary>
-        /// Extracts a string representation of the results of a SQL query (statement?). Works with single object projection
+        /// Extracts a string representation of the results of an SQL query. Works with single object projection results
         /// </summary>
         /// <param name="resultSet">The result of an SQL statement execution</param>
+        /// <param name="usesOrderBy">A boolean indicating the use of the ORDER BY keyword in the query</param>
         /// <returns>A string representation of the results contained in the input SqlEnumerator</returns>
         public static string GetResults(SqlEnumerator<dynamic> resultSet, Boolean usesOrderBy)
         {
@@ -191,9 +193,11 @@ namespace SQLTestFramework.Framework
         /// <summary>
         /// Generate a single string from a list of strings.
         /// </summary>
+        /// <param name="header">A header string to be added to the head of the result string, and excluded from any sorting</param>
         /// <param name="resultList">The list of strings to be used for the result</param>
         /// <param name="ignoreSorting">True if the current order of strings should be kept in the result</param>
-        /// <returns></returns>
+        /// <returns>A string containing the contents of the header and resultList arguments. 
+        /// The contents of the resultList will be sorted if ignoreSorting is false</returns>
         private static String GetResultString(String header, List<String> resultList, Boolean ignoreSorting)
         {
             string result = "";
