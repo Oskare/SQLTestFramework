@@ -19,7 +19,7 @@ namespace SQLTestFramework.Framework
         // Test case information read from input
         public String Description { get; set; }
         public String Statement { get; set; }
-        public Object[] VariableValues { get; set; }
+        public Object[] Values { get; set; }
         public Boolean DataManipulation { get; set; }
         public String ExpectedResults { get; set; }
         public String ExpectedException { get; set; }

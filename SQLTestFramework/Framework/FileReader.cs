@@ -123,7 +123,7 @@ namespace SQLTestFramework.Framework
             SQLQuery query4 = new SQLQuery();
             query4.Description = "Test 4";
             query4.Statement = "SELECT * FROM Person p WHERE Name=?";
-            query4.VariableValues = new Object[] { "Albert" };
+            query4.Values = new Object[] { "Albert" };
             query4.UsesOrderBy = false;
             query4.ExpectedResults =
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
@@ -153,7 +153,7 @@ namespace SQLTestFramework.Framework
             SQLQuery query5 = new SQLQuery();
             query5.Description = "Test 5";
             query5.Statement = "SELECT Name, ObjectID FROM Person p WHERE Name=?";
-            query5.VariableValues = new Object[] { "Albert" };
+            query5.Values = new Object[] { "Albert" };
             query5.UsesOrderBy = false;
             query5.ExpectedResults =
                 "| 0:String | 1:String |" + Environment.NewLine +
@@ -181,7 +181,7 @@ namespace SQLTestFramework.Framework
             SQLQuery query6 = new SQLQuery();
             query6.Description = "Test 6";
             query6.Statement = "SELECT Name FROM Person p WHERE Name=?";
-            query6.VariableValues = new Object[] { "Albert" };
+            query6.Values = new Object[] { "Albert" };
             query6.UsesOrderBy = false;
             query6.ExpectedResults =
                 "| String |" + Environment.NewLine +
@@ -270,7 +270,7 @@ namespace SQLTestFramework.Framework
             SQLQuery query10 = new SQLQuery();
             query10.Description = "Test 10";
             query10.Statement = "SELECT p FROM Person p where p.Name >= object 15";
-            query10.VariableValues = new Object[0];
+            query10.Values = new Object[0];
             query10.UsesOrderBy = false;
             query10.ExpectedException = "Failed to process query: " + 
                 "SELECT p FROM Person p where p.Name >= object 15: " +
@@ -279,7 +279,7 @@ namespace SQLTestFramework.Framework
             SQLQuery query11= new SQLQuery();
             query11.Description = "Test 11";
             query11.Statement = "SELECT p FROM Person p where p.Name >= object 15";
-            query11.VariableValues = new Object[0];
+            query11.Values = new Object[0];
             query11.UsesOrderBy = false;
             query11.ExpectedException = "GENERATE";
 
@@ -319,6 +319,41 @@ namespace SQLTestFramework.Framework
                 ")" +
                 ")";
 
+            TestQuery query13 = new TestQuery();
+            query13.Description = "Test 13";
+            query13.Statement = "SELECT * FROM Person p ORDER BY Name DESC";
+            query13.UsesOrderBy = true;
+            query13.ExpectedResults =
+                "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
+                "| Einstein | 1006 | Pu |" + Environment.NewLine +
+                "| Albert | 1005 | Pt |";
+            query13.ExpectedExecutionPlan = "Tables(" +
+                "0 = SQLTestFramework.Person" +
+                ")" +
+                "Projection(" +
+                "0 = " +
+                "StringProperty(0, Name)" +
+                "1 = " +
+                "ObjectNoProperty(0, ObjectNo)" +
+                "2 = " +
+                "ObjectIDProperty(0, ObjectID)" +
+                ")" +
+                "Sort(" +
+                "IndexScan(" +
+                "auto ON SQLTestFramework.Person" +
+                "0" +
+                "__id" +
+                "UIntegerDynamicRange(" +
+                ")" +
+                "LogicalValue(TRUE)" +
+                "Ascending" +
+                ")" +
+                "StringComparer(" +
+                "StringProperty(0, Name)" +
+                "Descending" +
+                ")" +
+                ")";
+
             queryList.Add(query1);
             queryList.Add(query2);
             queryList.Add(query3);
@@ -331,6 +366,7 @@ namespace SQLTestFramework.Framework
             queryList.Add(query10);
             queryList.Add(query11);
             queryList.Add(query12);
+            queryList.Add(query13);
 
             return queryList;
         }

@@ -24,7 +24,7 @@ namespace SQLTestFramework.Framework
         {
             Description = "";
             Statement = "";
-            VariableValues = null;
+            Values = null;
             DataManipulation = false;
             UsesOrderBy = false;
             UsesBisonParser = false;
@@ -95,13 +95,13 @@ namespace SQLTestFramework.Framework
             {
                 try
                 {
-                    resultEnumerator = Db.SQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
+                    resultEnumerator = Db.SQL(Statement, Values).GetEnumerator() as SqlEnumerator<dynamic>;
                 }
                 catch (SqlException e) // Catches ScErrUnsupportLiteral error to use SlowSQL since the statement contains literals
                 {
                     // TODO: Store internal parameter indicating the existence of literals and check this on next execution to avoid exceptions
                     //Console.WriteLine("Execute statement: " + e.Message);
-                    resultEnumerator = Db.SlowSQL(Statement, VariableValues).GetEnumerator() as SqlEnumerator<dynamic>;
+                    resultEnumerator = Db.SlowSQL(Statement, Values).GetEnumerator() as SqlEnumerator<dynamic>;
                 }       
 
                 string result;
