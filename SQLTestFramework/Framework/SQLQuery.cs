@@ -28,9 +28,9 @@ namespace SQLTestFramework.Framework
             DataManipulation = false;
             UsesOrderBy = false;
             UsesBisonParser = false;
-            ExpectedResults = "";
-            ExpectedException = "";
-            ExpectedExecutionPlan = "";
+            ExpectedResults = null;
+            ExpectedException = null;
+            ExpectedExecutionPlan = null;
 
             ActuallyUsesBisonParser = new List<Boolean>();
             ActualResults = new List<string>();
@@ -44,6 +44,22 @@ namespace SQLTestFramework.Framework
         /// <returns>A TestResult value indicating the outcome of the test case run</returns>
         public override TestResult EvaluateResults()
         {
+            if (ExpectedResults == null && ExpectedExecutionPlan == null && ExpectedException == null)
+            {
+                // Store use of bison parser internally
+                Result = TestResult.Generated;
+                return Result;
+            }
+
+            if (ExpectedException == null)
+                ExpectedException = "";
+
+            if (ExpectedExecutionPlan == null)
+                ExpectedExecutionPlan = "";
+
+            if (ExpectedResults == null)
+                ExpectedResults = "";
+
             String expectedResultsNoWhitespace = Regex.Replace(ExpectedResults, "\\s", "");
             String expectedExecutionPlanNoWhitespace = Regex.Replace(ExpectedExecutionPlan, "\\s", "");
             String expectedExceptionNoWhitespace = Regex.Replace(ExpectedException, "\\s", "");
@@ -51,33 +67,22 @@ namespace SQLTestFramework.Framework
             if (ActualResults.Count == 0 && ActualException.Count == 0)
                 throw new ArgumentException("No results or exceptions from statement execution exists");
 
-            if (expectedResultsNoWhitespace == "GENERATE" || 
-                expectedExecutionPlanNoWhitespace == "GENERATE" ||
-                ExpectedException == "GENERATE")
+            for (int i = 0; i < ActualResults.Count; i++)
             {
-                // Store use of bison parser internally
-                Result = TestResult.Generated;
-                return Result;
-            }
-            else
-            {
-                for (int i = 0; i < ActualResults.Count; i++)
+                if (expectedResultsNoWhitespace != Regex.Replace(ActualResults[i], "\\s", "") ||
+                    expectedExecutionPlanNoWhitespace != Regex.Replace(ActualExecutionPlan[i], "\\s", "") ||
+                    UsesBisonParser != ActuallyUsesBisonParser[i])
                 {
-                    if (expectedResultsNoWhitespace != Regex.Replace(ActualResults[i], "\\s", "") ||
-                        expectedExecutionPlanNoWhitespace != Regex.Replace(ActualExecutionPlan[i], "\\s", "") ||
-                        UsesBisonParser != ActuallyUsesBisonParser[i])
-                    {
-                        Result = TestResult.Failed;
-                        return Result;
-                    }
+                    Result = TestResult.Failed;
+                    return Result;
                 }
-                for (int i = 0; i < ActualException.Count; i++)
+            }
+            for (int i = 0; i < ActualException.Count; i++)
+            {
+                if (expectedExceptionNoWhitespace != Regex.Replace(ActualException[i], "\\s", ""))
                 {
-                    if (expectedExceptionNoWhitespace != Regex.Replace(ActualException[i], "\\s", ""))
-                    {
-                        Result = TestResult.Failed;
-                        return Result;
-                    }
+                    Result = TestResult.Failed;
+                    return Result;
                 }
             }
 

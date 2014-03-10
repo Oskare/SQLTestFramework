@@ -17,7 +17,12 @@ namespace SQLTestFramework.Framework
         /// </summary>
         /// <param name="filename">The file to read test from</param>
         /// <returns>A list of SQLTestCase representing every test in the input file</returns>
-        public List<SQLTestCase> ReadTests(string filename)
+        public List<SQLTestCase> ReadTests(string file)
+        {
+            return stub();
+        }
+
+        private List<SQLTestCase> stub()
         {
             List<SQLTestCase> queryList = new List<SQLTestCase>();
 
@@ -264,8 +269,6 @@ namespace SQLTestFramework.Framework
             query9.Description = "Test 9";
             query9.Statement = "SELECT * FROM Person p";
             query9.UsesOrderBy = false;
-            query9.ExpectedResults = "GENERATE ";
-            query9.ExpectedExecutionPlan = " GENERATE";
 
             SQLQuery query10 = new SQLQuery();
             query10.Description = "Test 10";
@@ -281,7 +284,6 @@ namespace SQLTestFramework.Framework
             query11.Statement = "SELECT p FROM Person p where p.Name >= object 15";
             query11.Values = new Object[0];
             query11.UsesOrderBy = false;
-            query11.ExpectedException = "GENERATE";
 
             SQLQuery query12 = new SQLQuery();
             query12.Description = "Test 12";
