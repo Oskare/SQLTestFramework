@@ -319,41 +319,6 @@ namespace SQLTestFramework.Framework
                 ")" +
                 ")";
 
-            TestQuery query13 = new TestQuery();
-            query13.Description = "Test 13";
-            query13.Statement = "SELECT * FROM Person p ORDER BY Name DESC";
-            query13.UsesOrderBy = true;
-            query13.ExpectedResults =
-                "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
-                "| Einstein | 1006 | Pu |" + Environment.NewLine +
-                "| Albert | 1005 | Pt |";
-            query13.ExpectedExecutionPlan = "Tables(" +
-                "0 = SQLTestFramework.Person" +
-                ")" +
-                "Projection(" +
-                "0 = " +
-                "StringProperty(0, Name)" +
-                "1 = " +
-                "ObjectNoProperty(0, ObjectNo)" +
-                "2 = " +
-                "ObjectIDProperty(0, ObjectID)" +
-                ")" +
-                "Sort(" +
-                "IndexScan(" +
-                "auto ON SQLTestFramework.Person" +
-                "0" +
-                "__id" +
-                "UIntegerDynamicRange(" +
-                ")" +
-                "LogicalValue(TRUE)" +
-                "Ascending" +
-                ")" +
-                "StringComparer(" +
-                "StringProperty(0, Name)" +
-                "Descending" +
-                ")" +
-                ")";
-
             queryList.Add(query1);
             queryList.Add(query2);
             queryList.Add(query3);
@@ -366,7 +331,6 @@ namespace SQLTestFramework.Framework
             queryList.Add(query10);
             queryList.Add(query11);
             queryList.Add(query12);
-            queryList.Add(query13);
 
             return queryList;
         }
