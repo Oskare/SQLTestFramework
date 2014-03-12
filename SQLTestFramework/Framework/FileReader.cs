@@ -269,6 +269,7 @@ namespace SQLTestFramework.Framework
             SQLQuery query9 = new SQLQuery();
             query9.Identifier = 9;
             query9.Description = "Test 9";
+            query9.Statement = "SELECT Name FROM Person p WHERE Name='Albert'";
 
             SQLQuery query10 = new SQLQuery();
             query10.Identifier = 10;
