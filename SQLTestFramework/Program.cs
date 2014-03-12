@@ -26,7 +26,8 @@ namespace SQLTestFramework
             TestRunner.ChecksumVerification = false; // For big database test run. Can be assigned automatically by examining 
             TestRunner.RunTest(
                 "C:\\Users\\starcounter\\Documents\\GitHub\\SQLTestFramework\\SQLTestFramework\\TestFile1.txt",
-                (int)DataProperties.NO_INDICES);
+                (int)DataProperties.NO_INDICES,
+                false);
 
             // Do test run with big database with indices
             /*TestRunner.ChecksumVerification = true; // For big database test run. Can be assigned automatically by examining db

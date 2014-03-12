@@ -115,7 +115,7 @@ namespace SQLTestFramework.Framework
         /// Calls inputHandler, TestExecutor, ResultValidator and OutputHandler components.
         /// </summary>
         /// <param name="filename">The file to read test cases from</param>
-        public static void RunTest(String filename, int state)
+        public static void RunTest(String filename, int state=0, Boolean parallelExecution=true)
         {
             ComponentNullCheck();
 
@@ -134,8 +134,10 @@ namespace SQLTestFramework.Framework
 
             // Run tests in parallel
             Log("Executing tests");
-            testExecutor.ExecuteSeq(testList);
-            //testExecutor.ExecutePar(testList);
+            if (parallelExecution)
+                testExecutor.ExecutePar(testList);
+            else
+                testExecutor.ExecuteSeq(testList);
             Log("Test execution finished");
 
             // Get failed/generated tests
