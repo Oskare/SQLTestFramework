@@ -27,9 +27,9 @@ namespace SQLTestFramework.Framework
             List<SQLTestCase> queryList = new List<SQLTestCase>();
 
             SQLQuery query1 = new SQLQuery();
+            query1.Identifier = 1;
             query1.Description = "Test 1";
             query1.Statement = "SELECT * FROM Person p ORDER BY Name DESC";
-            query1.UsesOrderBy = true;
             query1.ExpectedResults =
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
                 "| Einstein | 1006 | Pu |" + Environment.NewLine +
@@ -62,9 +62,9 @@ namespace SQLTestFramework.Framework
                 ")";
 
             SQLQuery query2 = new SQLQuery();
+            query2.Identifier = 2;
             query2.Description = "Test 2";
             query2.Statement = "SELECT * FROM Company c ORDER BY CompanyName DESC";
-            query2.UsesOrderBy = true;
             query2.ExpectedResults =
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
                 "| Starcounter | 1009 | Px |" + Environment.NewLine +
@@ -97,9 +97,9 @@ namespace SQLTestFramework.Framework
                 ")";
 
             SQLQuery query3 = new SQLQuery();
+            query3.Identifier = 3;
             query3.Description = "Test 3";
             query3.Statement = "SELECT * FROM Location l";
-            query3.UsesOrderBy = false;
             query3.ExpectedResults = 
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
                 "| Norway | 1008 | Pw |" + Environment.NewLine + 
@@ -126,10 +126,10 @@ namespace SQLTestFramework.Framework
                 ")";
 
             SQLQuery query4 = new SQLQuery();
+            query4.Identifier = 4;
             query4.Description = "Test 4";
             query4.Statement = "SELECT * FROM Person p WHERE Name=?";
             query4.Values = new Object[] { "Albert" };
-            query4.UsesOrderBy = false;
             query4.ExpectedResults =
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
                 "| Albert | 1005 | Pt |";
@@ -156,10 +156,10 @@ namespace SQLTestFramework.Framework
                 ")";
 
             SQLQuery query5 = new SQLQuery();
+            query5.Identifier = 5;
             query5.Description = "Test 5";
             query5.Statement = "SELECT Name, ObjectID FROM Person p WHERE Name=?";
             query5.Values = new Object[] { "Albert" };
-            query5.UsesOrderBy = false;
             query5.ExpectedResults =
                 "| 0:String | 1:String |" + Environment.NewLine +
                 "| Albert | Pt |";
@@ -184,10 +184,10 @@ namespace SQLTestFramework.Framework
                 ")";
 
             SQLQuery query6 = new SQLQuery();
+            query6.Identifier = 6;
             query6.Description = "Test 6";
             query6.Statement = "SELECT Name FROM Person p WHERE Name=?";
             query6.Values = new Object[] { "Albert" };
-            query6.UsesOrderBy = false;
             query6.ExpectedResults =
                 "| String |" + Environment.NewLine +
                 "| Albert |";
@@ -210,9 +210,9 @@ namespace SQLTestFramework.Framework
                 ")";
 
             SQLQuery query7 = new SQLQuery();
+            query7.Identifier = 7;
             query7.Description = "Test 7";
             query7.Statement = "SELECT Name FROM Person p";
-            query7.UsesOrderBy = false;
             query7.ExpectedResults =
                 "| String |" + Environment.NewLine +
                 "| Albert |" + Environment.NewLine +
@@ -235,9 +235,9 @@ namespace SQLTestFramework.Framework
                 ")";
 
             SQLQuery query8 = new SQLQuery();
+            query8.Identifier = 8;
             query8.Description = "Test 8";
             query8.Statement = "SELECT Name FROM Person p ORDER BY Name DESC";
-            query8.UsesOrderBy = true;
             query8.ExpectedResults =
                 "| String |" + Environment.NewLine +
                 "| Einstein |" + Environment.NewLine +
@@ -266,30 +266,28 @@ namespace SQLTestFramework.Framework
                 ")";
 
             SQLQuery query9 = new SQLQuery();
+            query9.Identifier = 9;
             query9.Description = "Test 9";
-            query9.Statement = "SELECT * FROM Person p";
-            query9.UsesOrderBy = false;
 
             SQLQuery query10 = new SQLQuery();
+            query10.Identifier = 10;
             query10.Description = "Test 10";
             query10.Statement = "SELECT p FROM Person p where p.Name >= object 15";
             query10.Values = new Object[0];
-            query10.UsesOrderBy = false;
             query10.ExpectedException = "Failed to process query: " + 
                 "SELECT p FROM Person p where p.Name >= object 15: " +
                 "Incorrect arguments of types string and object(unknown) to operator greaterThanOrEqual.";
 
             SQLQuery query11= new SQLQuery();
+            query11.Identifier = 11;
             query11.Description = "Test 11";
             query11.Statement = "SELECT p FROM Person p where p.Name >= object 15";
             query11.Values = new Object[0];
-            query11.UsesOrderBy = false;
 
             SQLQuery query12 = new SQLQuery();
+            query12.Identifier = 12;
             query12.Description = "Test 12";
             query12.Statement = "SELECT * FROM Person p ORDER BY Name DESC";
-            query12.UsesOrderBy = true;
-            query12.UsesBisonParser = false; // This should be read from the internally stored parameters when that functionality is implemented.
             query12.ExpectedResults =
                 "| 0:String | 1:UInt64 | 2:String |" + Environment.NewLine +
                 "| Einstein | 1006 | Pu |" + Environment.NewLine +
@@ -321,6 +319,16 @@ namespace SQLTestFramework.Framework
                 ")" +
                 ")";
 
+
+            SQLQuery query13 = new SQLQuery();
+            query13.Identifier = 13;
+            query13.Description = "Test 13";
+            query13.ContainsLiterals = false;
+            query13.Statement = "SELECT Name FROM Person p WHERE Name='Albert'";
+            query13.ExpectedException = "ScErrUnsupportLiteral (SCERR7029):" +
+                "Literals are not supported in the query. Method Starcounter.Db.SQL does not support queries with literals." +
+                "Found literal is Albert. Use variable and parameter instead.";
+
             queryList.Add(query1);
             queryList.Add(query2);
             queryList.Add(query3);
@@ -333,6 +341,7 @@ namespace SQLTestFramework.Framework
             queryList.Add(query10);
             queryList.Add(query11);
             queryList.Add(query12);
+            queryList.Add(query13);
 
             return queryList;
         }

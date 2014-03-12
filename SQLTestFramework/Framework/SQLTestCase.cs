@@ -16,6 +16,9 @@ namespace SQLTestFramework.Framework
         /// </summary>
         public enum TestResult { Passed, Failed, Generated };
 
+        public int Identifier { get; set; }
+        public TestCaseParameters InternalParam { get; set; }
+
         // Test case information read from input
         public String Description { get; set; }
         public String Statement { get; set; }

@@ -9,6 +9,21 @@ namespace SQLTestFramework.Framework
     public static class TestRunner
     {
         /// <summary>
+        /// Indicates if test results verification should use string comparison or checksum value comparison
+        /// </summary>
+        public static Boolean ChecksumVerification { get; set; }
+
+        /// <summary>
+        /// An integer used to identify test runs on different database state. Used to match tests to different result sets.
+        /// </summary>
+        public static int DatabaseState { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static String inputFilePath = null;
+
+        /// <summary>
         /// List of all test cases to be executed and evaluated
         /// </summary>
         private static List<SQLTestCase> testList;
@@ -24,6 +39,7 @@ namespace SQLTestFramework.Framework
         private static List<SQLTestCase> generatedTests;
 
         private static IInputHandler inputHandler;
+        private static IInternalParameterHandler parameterHandler;
         private static ITestExecutor testExecutor;
         private static IResultValidator resultValidator;
         private static IOutputHandler outputHandler;
@@ -41,13 +57,16 @@ namespace SQLTestFramework.Framework
         /// <param name="executor">An object implementing the test executor system component.</param>
         /// <param name="validator">An object implementing the result validator system component.</param>
         /// <param name="output">An object implementing the output handler system component.</param>
-        public static void Initialize(IInputHandler input = null, ITestExecutor executor = null, 
-            IResultValidator validator = null, IOutputHandler output = null)
+        public static void Initialize(IInputHandler input = null, IInternalParameterHandler parameter = null, 
+            ITestExecutor executor = null, IResultValidator validator = null, IOutputHandler output = null)
         {
             inputHandler = input;
+            parameterHandler = parameter;
             testExecutor = executor;
             resultValidator = validator;
             outputHandler = output;
+
+            ChecksumVerification = false;
         }
 
         /// <summary>
@@ -59,6 +78,12 @@ namespace SQLTestFramework.Framework
             {
                 inputHandler = new FileReader();
                 Log("No InputHandler supplied, using standard implementation");
+            }
+
+            if (parameterHandler == null)
+            {
+                parameterHandler = new InternalParameterHandler();
+                Log("No ParameterHandler supplied, using standard implementation");
             }
 
             if (testExecutor == null)
@@ -85,14 +110,19 @@ namespace SQLTestFramework.Framework
         /// Calls inputHandler, TestExecutor, ResultValidator and OutputHandler components.
         /// </summary>
         /// <param name="filename">The file to read test cases from</param>
-        public static void RunTest(String filename)
+        public static void RunTest(String filename, int state)
         {
             ComponentNullCheck();
 
+            DatabaseState = state;
+
             // Read tests from input
             Log("Reading tests from input");
-            testList = inputHandler.ReadTests(filename);
+            testList = inputHandler.ReadTests(filename); // Perhaps use out parameter to count read tests
             Log("Read " + testList.Count + " tests");
+
+            // Fetch internal parameters
+            parameterHandler.LoadParameters(filename, testList);
 
             // Run tests in parallel
             Log("Executing tests");
@@ -106,6 +136,9 @@ namespace SQLTestFramework.Framework
             failedTests = validationResults.Item1;
             generatedTests = validationResults.Item2;
             Log("Test validation finished");
+
+            // Store iternal parameters
+            parameterHandler.StoreParameters();
 
             // Output
             Log("Writing output");

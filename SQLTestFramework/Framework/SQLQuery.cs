@@ -16,9 +16,13 @@ namespace SQLTestFramework.Framework
         // Some of these should perhaps be moved into the interface
         public String ExpectedExecutionPlan { get; set; }
         public List<String> ActualExecutionPlan { get; set; }
-        public Boolean UsesOrderBy { get; set; }
-        public Boolean UsesBisonParser { get; set; }
         public List<Boolean> ActuallyUsesBisonParser { get; set; }
+
+        // Override of internal parameters
+        public Nullable<Boolean> UsesBisonParser { get; set; }
+        public Nullable<Boolean> UsesOrderBy { get; set; }
+        public Nullable<Boolean> SingleObjectProjection { get; set; }
+        public Nullable<Boolean> ContainsLiterals { get; set; }
 
         public SQLQuery()
         {
@@ -26,11 +30,14 @@ namespace SQLTestFramework.Framework
             Statement = "";
             Values = null;
             DataManipulation = false;
-            UsesOrderBy = false;
-            UsesBisonParser = false;
             ExpectedResults = null;
             ExpectedException = null;
             ExpectedExecutionPlan = null;
+
+            UsesOrderBy = null;
+            UsesBisonParser = null;
+            SingleObjectProjection = null;
+            ContainsLiterals = null;
 
             ActuallyUsesBisonParser = new List<Boolean>();
             ActualResults = new List<string>();
@@ -46,7 +53,11 @@ namespace SQLTestFramework.Framework
         {
             if (ExpectedResults == null && ExpectedExecutionPlan == null && ExpectedException == null)
             {
-                // Store use of bison parser internally
+                InternalParam = new TestCaseParameters(Identifier);
+                if (ActuallyUsesBisonParser.Count > 0)
+                    InternalParam.UsesBisonParser = ActuallyUsesBisonParser[0];
+                // Else, the test result is an exception, and bison parser will not be used
+
                 Result = TestResult.Generated;
                 return Result;
             }
@@ -60,9 +71,14 @@ namespace SQLTestFramework.Framework
             if (ExpectedResults == null)
                 ExpectedResults = "";
 
+            if (!InternalParam.UsesBisonParser.HasValue && ActuallyUsesBisonParser.Count > 0)
+                InternalParam.UsesBisonParser = ActuallyUsesBisonParser[0];
+
             String expectedResultsNoWhitespace = Regex.Replace(ExpectedResults, "\\s", "");
             String expectedExecutionPlanNoWhitespace = Regex.Replace(ExpectedExecutionPlan, "\\s", "");
             String expectedExceptionNoWhitespace = Regex.Replace(ExpectedException, "\\s", "");
+            Boolean usesBisonParser = UsesBisonParser.HasValue && UsesBisonParser.Value ||
+                InternalParam.UsesBisonParser.HasValue && InternalParam.UsesBisonParser.Value && !UsesBisonParser.HasValue;
 
             if (ActualResults.Count == 0 && ActualException.Count == 0)
                 throw new ArgumentException("No results or exceptions from statement execution exists");
@@ -71,7 +87,7 @@ namespace SQLTestFramework.Framework
             {
                 if (expectedResultsNoWhitespace != Regex.Replace(ActualResults[i], "\\s", "") ||
                     expectedExecutionPlanNoWhitespace != Regex.Replace(ActualExecutionPlan[i], "\\s", "") ||
-                    UsesBisonParser != ActuallyUsesBisonParser[i])
+                    (usesBisonParser != ActuallyUsesBisonParser[i]))
                 {
                     Result = TestResult.Failed;
                     return Result;
@@ -95,46 +111,98 @@ namespace SQLTestFramework.Framework
         /// </summary>
         public override void Execute()
         {
+            // User supplied parameters will override internal parameters
+            Boolean containsLiterals = ContainsLiterals.HasValue && ContainsLiterals.Value ||
+                InternalParam.ContainsLiterals.HasValue && InternalParam.ContainsLiterals.Value && !ContainsLiterals.HasValue;
+            Boolean singleObjectProj = SingleObjectProjection.HasValue && SingleObjectProjection.Value ||
+                InternalParam.SingleObjectProjection.HasValue && InternalParam.SingleObjectProjection.Value && !SingleObjectProjection.HasValue;
+
             SqlEnumerator<dynamic> resultEnumerator = null;
             try
             {
-                try
+                if (!InternalParam.ContainsLiterals.HasValue && !ContainsLiterals.HasValue)
                 {
-                    resultEnumerator = Db.SQL(Statement, Values).GetEnumerator() as SqlEnumerator<dynamic>;
+                    try
+                    {
+                        resultEnumerator = Db.SQL(Statement, Values).GetEnumerator() as SqlEnumerator<dynamic>;
+                        InternalParam.ContainsLiterals = false;
+                    }
+                    catch (SqlException e)
+                    {
+                        throw e;
+                    }
+                    catch (Exception e) // Catches ScErrUnsupportLiteral error
+                    {
+                        //Console.WriteLine("Execute statement: " + e.Message);
+                        // TODO: Match unsupported literal exception, throw otherwise. 
+                        //       Also removes the need for the SqlException above
+                        resultEnumerator = Db.SlowSQL(Statement, Values).GetEnumerator() as SqlEnumerator<dynamic>;
+                        InternalParam.ContainsLiterals = true;
+                    }
                 }
-                catch (SqlException e) // Catches ScErrUnsupportLiteral error to use SlowSQL since the statement contains literals
-                {
-                    // TODO: Store internal parameter indicating the existence of literals and check this on next execution to avoid exceptions
-                    //Console.WriteLine("Execute statement: " + e.Message);
+                else if (containsLiterals)
                     resultEnumerator = Db.SlowSQL(Statement, Values).GetEnumerator() as SqlEnumerator<dynamic>;
-                }       
+                else
+                    resultEnumerator = Db.SQL(Statement, Values).GetEnumerator() as SqlEnumerator<dynamic>;
 
                 string result;
-                try
+                if (!InternalParam.SingleObjectProjection.HasValue && !SingleObjectProjection.HasValue)
                 {
-                    result = Utilities.GetResults(resultEnumerator, UsesOrderBy);
+                    try
+                    {
+                        result = Utilities.GetResults(resultEnumerator, hasOrderByClause());
+                        InternalParam.SingleObjectProjection = false;
+                    }
+                    catch (NullReferenceException e) // Exception indicating that the result set contains single element rows
+                    {
+                        //Console.WriteLine("GetResults: " + e.Message);
+                        result = Utilities.GetSingleElementResults(resultEnumerator, hasOrderByClause());
+                        InternalParam.SingleObjectProjection = true;
+                    }
                 }
-                catch (NullReferenceException e) // Catches exception indicating that the result set contains single element rows
-                {
-                    // TODO: Store internal parameter indicating single object projection
-                    //Console.WriteLine("GetResults: " + e.Message);
-                    result = Utilities.GetSingleElementResults(resultEnumerator, UsesOrderBy);
-                }
+                else if (singleObjectProj)
+                    result = Utilities.GetSingleElementResults(resultEnumerator, hasOrderByClause());
+                else
+                    result = Utilities.GetResults(resultEnumerator, hasOrderByClause());
 
                 ActualResults.Add(result);
                 ActualExecutionPlan.Add(resultEnumerator.ToString());
                 ActuallyUsesBisonParser.Add(resultEnumerator.IsBisonParserUsed);
             }
-            catch (SqlException exception) // Catch actual exceptions when executing queries
+            catch (Exception exception) // Catch actual exceptions when executing queries
             {
                 //Console.WriteLine("Actual exception: " + exception.Message);
-                ActualException.Add(exception.Message);
+                String exceptionMessage = exception.Message;
+                if (exceptionMessage.Contains("\r"))
+                    exceptionMessage = exceptionMessage.Substring(0, exceptionMessage.IndexOf("\r"));
+                if (exceptionMessage.Contains("\n"))
+                    exceptionMessage = exceptionMessage.Substring(0, exceptionMessage.IndexOf("\n"));
+
+                ActualException.Add(exceptionMessage);
             }
+
             finally
             {
                 if (resultEnumerator != null)
                     resultEnumerator.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Check if internal parameters specify the use of ORDER BY clause in the query.
+        /// Otherwise, parse the query to find out.
+        /// </summary>
+        /// <returns>True if the query contains an ORDER BY clause, otherwise false.</returns>
+        private Boolean hasOrderByClause()
+        {
+            if (!InternalParam.UsesOrderBy.HasValue)
+            {
+                Boolean containsOrderBy = (Statement.IndexOf("order by", StringComparison.OrdinalIgnoreCase) >= 0);
+                InternalParam.UsesOrderBy = containsOrderBy;
+            }
+
+            return UsesOrderBy.HasValue && UsesOrderBy.Value || 
+                InternalParam.UsesOrderBy.HasValue && InternalParam.UsesOrderBy.Value && !UsesOrderBy.HasValue;
         }
 
         public override string ToString()
@@ -157,6 +225,10 @@ namespace SQLTestFramework.Framework
             }
             else
             {
+                summary.AppendLine("Expected use of bison parser (internal): " + InternalParam.UsesBisonParser);
+                for (int i = 0; i < ActuallyUsesBisonParser.Count; i++)
+                    summary.AppendLine("Actual use of bison parser " + (i + 1) + ": " + ActuallyUsesBisonParser[i]);
+
                 summary.AppendLine("Expected use of bison parser: " + UsesBisonParser);
                 for (int i = 0; i < ActuallyUsesBisonParser.Count; i++)
                     summary.AppendLine("Actual use of bison parser " + (i + 1) + ": " + ActuallyUsesBisonParser[i]);
@@ -173,6 +245,23 @@ namespace SQLTestFramework.Framework
                 for (int i = 0; i < ActualException.Count; i++)
                     summary.Append("Actual exception " + (i + 1) + ": " + Environment.NewLine + ActualException[i]);
             }
+
+            if (InternalParam != null)
+            {
+                summary.AppendLine("Parameters: ");
+                summary.AppendLine("ID: " + Identifier);
+                summary.AppendLine("UsesBisonParser: " + UsesBisonParser);
+                summary.AppendLine("UsesOrderBy: " + UsesOrderBy);
+                summary.AppendLine("SingleObjectProjection: " + SingleObjectProjection);
+                summary.AppendLine("ContainsLiteral: " + ContainsLiterals);
+                summary.AppendLine("InternalParameters: ");
+                summary.AppendLine("ID: " + InternalParam.Identifier);
+                summary.AppendLine("UsesBisonParser: " + InternalParam.UsesBisonParser);
+                summary.AppendLine("UsesOrderBy: " + InternalParam.UsesOrderBy);
+                summary.AppendLine("SingleObjectProjection: " + InternalParam.SingleObjectProjection);
+                summary.AppendLine("ContainsLiteral: " + InternalParam.ContainsLiterals);
+            }
+
             return summary.ToString();
         }
 

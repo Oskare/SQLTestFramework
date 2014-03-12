@@ -41,6 +41,10 @@ namespace SQLTestFramework.Framework
                 failed + " test cases failed, " + Environment.NewLine + 
                 generated + " test case results generated");
 
+            output.AppendLine(Environment.NewLine + " INTERNAL PARAMETERS: ");
+            foreach (SQLTestCase test in tests)
+                output.AppendLine(test.InternalParam.ToString());
+
             Console.Write(output.ToString());
         }
     }
