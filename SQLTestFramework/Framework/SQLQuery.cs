@@ -17,6 +17,7 @@ namespace SQLTestFramework.Framework
         public String ExpectedExecutionPlan { get; set; }
         public List<String> ActualExecutionPlan { get; set; }
         public List<Boolean> ActuallyUsesBisonParser { get; set; }
+        public int LineNumber { get; set; }
 
         // Override of internal parameters
         public Nullable<Boolean> UsesBisonParser { get; set; }
@@ -33,6 +34,7 @@ namespace SQLTestFramework.Framework
             ExpectedResults = null;
             ExpectedException = null;
             ExpectedExecutionPlan = null;
+            LineNumber = -1;
 
             UsesOrderBy = null;
             UsesBisonParser = null;
@@ -210,6 +212,7 @@ namespace SQLTestFramework.Framework
             StringBuilder summary = new StringBuilder();
             
             summary.AppendLine("Description: " + Description);
+            summary.AppendLine("Line number: " + LineNumber);
             summary.AppendLine("Statement: " + Statement);
 
             if (Result == SQLTestCase.TestResult.Generated)
