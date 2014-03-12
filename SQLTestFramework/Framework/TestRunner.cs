@@ -38,6 +38,11 @@ namespace SQLTestFramework.Framework
         /// </summary>
         private static List<SQLTestCase> generatedTests;
 
+        /// <summary>
+        /// List of comments read from input file
+        /// </summary>
+        private static List<Tuple<int, string>> comments;
+
         private static IInputHandler inputHandler;
         private static IInternalParameterHandler parameterHandler;
         private static ITestExecutor testExecutor;
@@ -118,7 +123,10 @@ namespace SQLTestFramework.Framework
 
             // Read tests from input
             Log("Reading tests from input");
-            testList = inputHandler.ReadTests(filename); // Perhaps use out parameter to count read tests
+            Tuple<List<Tuple<int, string>>, List<SQLTestCase>> input = inputHandler.ReadTests(filename); 
+            // Perhaps use out parameter to count read tests
+            testList = input.Item2;
+            comments = input.Item1;
             Log("Read " + testList.Count + " tests");
 
             // Fetch internal parameters
@@ -142,7 +150,7 @@ namespace SQLTestFramework.Framework
 
             // Output
             Log("Writing output");
-            outputHandler.Output(testList, failedTests, generatedTests);
+            outputHandler.Output(testList, failedTests, generatedTests, comments);
             Log("Test run finished");
         }
     }

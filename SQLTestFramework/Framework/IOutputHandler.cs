@@ -11,6 +11,7 @@ namespace SQLTestFramework.Framework
     /// </summary>
     public interface IOutputHandler
     {
-        void Output(List<SQLTestCase> tests, List<SQLTestCase> failedTests, List<SQLTestCase> generatedTests);
+        void Output(List<SQLTestCase> tests, List<SQLTestCase> failedTests, 
+            List<SQLTestCase> generatedTests, List<Tuple<int,string>> comments);
     }
 }

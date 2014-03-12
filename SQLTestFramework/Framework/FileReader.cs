@@ -17,14 +17,15 @@ namespace SQLTestFramework.Framework
         /// </summary>
         /// <param name="filename">The file to read test from</param>
         /// <returns>A list of SQLTestCase representing every test in the input file</returns>
-        public List<SQLTestCase> ReadTests(string file)
+        public Tuple<List<Tuple<int, string>>, List<SQLTestCase>> ReadTests(string file)
         {
             return stub();
         }
 
-        private List<SQLTestCase> stub()
+        private Tuple<List<Tuple<int, string>>, List<SQLTestCase>> stub()
         {
             List<SQLTestCase> queryList = new List<SQLTestCase>();
+            List<Tuple<int, string>> comments = new List<Tuple<int, string>>();
 
             SQLQuery query1 = new SQLQuery();
             query1.Identifier = 1;
@@ -343,7 +344,10 @@ namespace SQLTestFramework.Framework
             queryList.Add(query12);
             queryList.Add(query13);
 
-            return queryList;
+            comments.Add(new Tuple<int,string>(2,"First comment at position 2"));
+            comments.Add(new Tuple<int,string>(5,"Second comment at position 5"));
+
+            return new Tuple<List<Tuple<int, string>>, List<SQLTestCase>>(comments, queryList);
         }
     }
 }

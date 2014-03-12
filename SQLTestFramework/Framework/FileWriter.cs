@@ -18,7 +18,8 @@ namespace SQLTestFramework.Framework
         /// <param name="tests">List of all run tests</param>
         /// <param name="failedTests">List of all failed tests</param>
         /// <param name="generatedTests">List of all generated tests</param>
-        public void Output(List<SQLTestCase> tests, List<SQLTestCase> failedTests, List<SQLTestCase> generatedTests)
+        public void Output(List<SQLTestCase> tests, List<SQLTestCase> failedTests, 
+            List<SQLTestCase> generatedTests, List<Tuple<int,string>> comments)
         {
             StringBuilder output = new StringBuilder();
 
@@ -44,6 +45,9 @@ namespace SQLTestFramework.Framework
             output.AppendLine(Environment.NewLine + " INTERNAL PARAMETERS: ");
             foreach (SQLTestCase test in tests)
                 output.AppendLine(test.InternalParam.ToString());
+
+            foreach (Tuple<int, string> comment in comments)
+                output.AppendLine("Comment at " + comment.Item1 + " - " + comment.Item2);
 
             Console.Write(output.ToString());
         }

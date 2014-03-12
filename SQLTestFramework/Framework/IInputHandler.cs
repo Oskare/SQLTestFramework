@@ -11,6 +11,11 @@ namespace SQLTestFramework.Framework
     /// </summary>
     public interface IInputHandler
     {
-        List<SQLTestCase> ReadTests(String filename);
+        /// <summary>
+        /// Read comments and test cases from file 
+        /// </summary>
+        /// <returns>A tuple where the first element is a list of comments (<int,string> tuples)
+        /// and the second element is a list of SQLTestCases</returns>
+        Tuple<List<Tuple<int,string>>,List<SQLTestCase>> ReadTests(String filename);
     }
 }
